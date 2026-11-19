@@ -52,6 +52,9 @@
   .bar .tot{text-align:right;white-space:nowrap}
   .bar .delta{font-size:11px;font-weight:700;color:var(--muted)}
   .bar .delta.up{color:var(--ok)} .bar .delta.down{color:var(--warn)}
+  .qrbox{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .qrbox svg{width:min(62vw,230px);height:auto;display:block;border-radius:10px}
+  .linkbtn{border:none;background:none;min-height:auto;padding:6px 0 0;width:auto;font-size:14px;font-weight:700;color:var(--navy);text-decoration:underline}
   .adj{min-height:40px;height:40px;padding:0;border-radius:12px;font-size:20px;line-height:1}
   .hidden{display:none !important}
   .toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 16px;border-radius:12px;font-weight:600;font-size:14px;max-width:90vw;text-align:center;z-index:9}
@@ -88,12 +91,21 @@
         <div>
           <div class="sub">Kode room</div>
           <div class="code" id="roomCode">----</div>
+          <button class="linkbtn" id="btnQR">Tampilkan QR</button>
         </div>
         <div class="meta" style="justify-content:flex-end">
+          <span class="chip hidden" id="netChip">● Online</span>
           <span class="chip host hidden" id="hostChip">PEMILIK</span>
           <span class="chip" id="playersChip">Pemain 1/6</span>
           <span class="chip" id="roundChip">Polemik #1</span>
         </div>
+      </div>
+    </div>
+
+    <div class="panel hidden" id="qrPanel">
+      <div class="qrbox">
+        <div id="qrSvg"></div>
+        <p class="note">Scan dengan kamera HP untuk gabung ke room <b id="qrCode"></b></p>
       </div>
     </div>
 
@@ -131,6 +143,2304 @@
     isUnifiedPlanSupported:${this.isUnifiedPlanSupported()}`}constructor(){this.isIOS="undefined"!=typeof navigator&&["iPad","iPhone","iPod"].includes(navigator.platform),this.supportedBrowsers=["firefox","chrome","safari"],this.minFirefoxVersion=59,this.minChromeVersion=72,this.minSafariVersion=605}},ew=e=>!e||/^[A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$/.test(e),eE=()=>Math.random().toString(36).slice(2),eD={iceServers:[{urls:"stun:stun.l.google.com:19302"},{urls:["turn:eu-0.turn.peerjs.com:3478","turn:us-0.turn.peerjs.com:3478"],username:"peerjs",credential:"peerjsp"}],sdpSemantics:"unified-plan"},ex=new class extends n{noop(){}blobToArrayBuffer(e,t){let n=new FileReader;return n.onload=function(e){e.target&&t(e.target.result)},n.readAsArrayBuffer(e),n}binaryStringToArrayBuffer(e){let t=new Uint8Array(e.length);for(let n=0;n<e.length;n++)t[n]=255&e.charCodeAt(n);return t.buffer}isSecure(){return"https:"===location.protocol}constructor(...e){super(...e),this.CLOUD_HOST="0.peerjs.com",this.CLOUD_PORT=443,this.chunkedBrowsers={Chrome:1,chrome:1},this.defaultConfig=eD,this.browser=eP.getBrowser(),this.browserVersion=eP.getVersion(),this.pack=o,this.unpack=i,this.supports=function(){let e;let t={browser:eP.isBrowserSupported(),webRTC:eP.isWebRTCSupported(),audioVideo:!1,data:!1,binaryBlob:!1,reliable:!1};if(!t.webRTC)return t;try{let n;e=new RTCPeerConnection(eD),t.audioVideo=!0;try{n=e.createDataChannel("_PEERJSTEST",{ordered:!0}),t.data=!0,t.reliable=!!n.ordered;try{n.binaryType="blob",t.binaryBlob=!eP.isIOS}catch(e){}}catch(e){}finally{n&&n.close()}}catch(e){}finally{e&&e.close()}return t}(),this.validateId=ew,this.randomToken=eE}};(_=P||(P={}))[_.Disabled=0]="Disabled",_[_.Errors=1]="Errors",_[_.Warnings=2]="Warnings",_[_.All=3]="All";var eI=new class{get logLevel(){return this._logLevel}set logLevel(e){this._logLevel=e}log(...e){this._logLevel>=3&&this._print(3,...e)}warn(...e){this._logLevel>=2&&this._print(2,...e)}error(...e){this._logLevel>=1&&this._print(1,...e)}setLogFunction(e){this._print=e}_print(e,...t){let n=["PeerJS: ",...t];for(let e in n)n[e]instanceof Error&&(n[e]="("+n[e].name+") "+n[e].message);e>=3?console.log(...n):e>=2?console.warn("WARNING",...n):e>=1&&console.error("ERROR",...n)}constructor(){this._logLevel=0}},eM={},eO=Object.prototype.hasOwnProperty,ej="~";function eL(){}function eA(e,t,n){this.fn=e,this.context=t,this.once=n||!1}function eB(e,t,n,r,i){if("function"!=typeof n)throw TypeError("The listener must be a function");var o=new eA(n,r||e,i),s=ej?ej+t:t;return e._events[s]?e._events[s].fn?e._events[s]=[e._events[s],o]:e._events[s].push(o):(e._events[s]=o,e._eventsCount++),e}function eF(e,t){0==--e._eventsCount?e._events=new eL:delete e._events[t]}function eU(){this._events=new eL,this._eventsCount=0}Object.create&&(eL.prototype=Object.create(null),new eL().__proto__||(ej=!1)),eU.prototype.eventNames=function(){var e,t,n=[];if(0===this._eventsCount)return n;for(t in e=this._events)eO.call(e,t)&&n.push(ej?t.slice(1):t);return Object.getOwnPropertySymbols?n.concat(Object.getOwnPropertySymbols(e)):n},eU.prototype.listeners=function(e){var t=ej?ej+e:e,n=this._events[t];if(!n)return[];if(n.fn)return[n.fn];for(var r=0,i=n.length,o=Array(i);r<i;r++)o[r]=n[r].fn;return o},eU.prototype.listenerCount=function(e){var t=ej?ej+e:e,n=this._events[t];return n?n.fn?1:n.length:0},eU.prototype.emit=function(e,t,n,r,i,o){var s=ej?ej+e:e;if(!this._events[s])return!1;var a,c,l=this._events[s],p=arguments.length;if(l.fn){switch(l.once&&this.removeListener(e,l.fn,void 0,!0),p){case 1:return l.fn.call(l.context),!0;case 2:return l.fn.call(l.context,t),!0;case 3:return l.fn.call(l.context,t,n),!0;case 4:return l.fn.call(l.context,t,n,r),!0;case 5:return l.fn.call(l.context,t,n,r,i),!0;case 6:return l.fn.call(l.context,t,n,r,i,o),!0}for(c=1,a=Array(p-1);c<p;c++)a[c-1]=arguments[c];l.fn.apply(l.context,a)}else{var d,h=l.length;for(c=0;c<h;c++)switch(l[c].once&&this.removeListener(e,l[c].fn,void 0,!0),p){case 1:l[c].fn.call(l[c].context);break;case 2:l[c].fn.call(l[c].context,t);break;case 3:l[c].fn.call(l[c].context,t,n);break;case 4:l[c].fn.call(l[c].context,t,n,r);break;default:if(!a)for(d=1,a=Array(p-1);d<p;d++)a[d-1]=arguments[d];l[c].fn.apply(l[c].context,a)}}return!0},eU.prototype.on=function(e,t,n){return eB(this,e,t,n,!1)},eU.prototype.once=function(e,t,n){return eB(this,e,t,n,!0)},eU.prototype.removeListener=function(e,t,n,r){var i=ej?ej+e:e;if(!this._events[i])return this;if(!t)return eF(this,i),this;var o=this._events[i];if(o.fn)o.fn!==t||r&&!o.once||n&&o.context!==n||eF(this,i);else{for(var s=0,a=[],c=o.length;s<c;s++)(o[s].fn!==t||r&&!o[s].once||n&&o[s].context!==n)&&a.push(o[s]);a.length?this._events[i]=1===a.length?a[0]:a:eF(this,i)}return this},eU.prototype.removeAllListeners=function(e){var t;return e?(t=ej?ej+e:e,this._events[t]&&eF(this,t)):(this._events=new eL,this._eventsCount=0),this},eU.prototype.off=eU.prototype.removeListener,eU.prototype.addListener=eU.prototype.on,eU.prefixed=ej,eU.EventEmitter=eU,eM=eU,(C=w||(w={})).Data="data",C.Media="media",(b=E||(E={})).BrowserIncompatible="browser-incompatible",b.Disconnected="disconnected",b.InvalidID="invalid-id",b.InvalidKey="invalid-key",b.Network="network",b.PeerUnavailable="peer-unavailable",b.SslUnavailable="ssl-unavailable",b.ServerError="server-error",b.SocketError="socket-error",b.SocketClosed="socket-closed",b.UnavailableID="unavailable-id",b.WebRTC="webrtc",(v=D||(D={})).NegotiationFailed="negotiation-failed",v.ConnectionClosed="connection-closed",(k=x||(x={})).NotOpenYet="not-open-yet",k.MessageToBig="message-too-big",(T=I||(I={})).Binary="binary",T.BinaryUTF8="binary-utf8",T.JSON="json",T.None="raw",(S=M||(M={})).Message="message",S.Disconnected="disconnected",S.Error="error",S.Close="close",(R=O||(O={})).Heartbeat="HEARTBEAT",R.Candidate="CANDIDATE",R.Offer="OFFER",R.Answer="ANSWER",R.Open="OPEN",R.Error="ERROR",R.IdTaken="ID-TAKEN",R.InvalidKey="INVALID-KEY",R.Leave="LEAVE",R.Expire="EXPIRE";var ez={};ez=JSON.parse('{"name":"peerjs","version":"1.5.4","keywords":["peerjs","webrtc","p2p","rtc"],"description":"PeerJS client","homepage":"https://peerjs.com","bugs":{"url":"https://github.com/peers/peerjs/issues"},"repository":{"type":"git","url":"https://github.com/peers/peerjs"},"license":"MIT","contributors":["Michelle Bu <michelle@michellebu.com>","afrokick <devbyru@gmail.com>","ericz <really.ez@gmail.com>","Jairo <kidandcat@gmail.com>","Jonas Gloning <34194370+jonasgloning@users.noreply.github.com>","Jairo Caro-Accino Viciana <jairo@galax.be>","Carlos Caballero <carlos.caballero.gonzalez@gmail.com>","hc <hheennrryy@gmail.com>","Muhammad Asif <capripio@gmail.com>","PrashoonB <prashoonbhattacharjee@gmail.com>","Harsh Bardhan Mishra <47351025+HarshCasper@users.noreply.github.com>","akotynski <aleksanderkotbury@gmail.com>","lmb <i@lmb.io>","Jairooo <jairocaro@msn.com>","Moritz Stückler <moritz.stueckler@gmail.com>","Simon <crydotsnakegithub@gmail.com>","Denis Lukov <denismassters@gmail.com>","Philipp Hancke <fippo@andyet.net>","Hans Oksendahl <hansoksendahl@gmail.com>","Jess <jessachandler@gmail.com>","khankuan <khankuan@gmail.com>","DUODVK <kurmanov.work@gmail.com>","XiZhao <kwang1imsa@gmail.com>","Matthias Lohr <matthias@lohr.me>","=frank tree <=frnktrb@googlemail.com>","Andre Eckardt <aeckardt@outlook.com>","Chris Cowan <agentme49@gmail.com>","Alex Chuev <alex@chuev.com>","alxnull <alxnull@e.mail.de>","Yemel Jardi <angel.jardi@gmail.com>","Ben Parnell <benjaminparnell.94@gmail.com>","Benny Lichtner <bennlich@gmail.com>","fresheneesz <bitetrudpublic@gmail.com>","bob.barstead@exaptive.com <bob.barstead@exaptive.com>","chandika <chandika@gmail.com>","emersion <contact@emersion.fr>","Christopher Van <cvan@users.noreply.github.com>","eddieherm <edhermoso@gmail.com>","Eduardo Pinho <enet4mikeenet@gmail.com>","Evandro Zanatta <ezanatta@tray.net.br>","Gardner Bickford <gardner@users.noreply.github.com>","Gian Luca <gianluca.cecchi@cynny.com>","PatrickJS <github@gdi2290.com>","jonnyf <github@jonathanfoss.co.uk>","Hizkia Felix <hizkifw@gmail.com>","Hristo Oskov <hristo.oskov@gmail.com>","Isaac Madwed <i.madwed@gmail.com>","Ilya Konanykhin <ilya.konanykhin@gmail.com>","jasonbarry <jasbarry@me.com>","Jonathan Burke <jonathan.burke.1311@googlemail.com>","Josh Hamit <josh.hamit@gmail.com>","Jordan Austin <jrax86@gmail.com>","Joel Wetzell <jwetzell@yahoo.com>","xizhao <kevin.wang@cloudera.com>","Alberto Torres <kungfoobar@gmail.com>","Jonathan Mayol <mayoljonathan@gmail.com>","Jefferson Felix <me@jsfelix.dev>","Rolf Erik Lekang <me@rolflekang.com>","Kevin Mai-Husan Chia <mhchia@users.noreply.github.com>","Pepijn de Vos <pepijndevos@gmail.com>","JooYoung <qkdlql@naver.com>","Tobias Speicher <rootcommander@gmail.com>","Steve Blaurock <sblaurock@gmail.com>","Kyrylo Shegeda <shegeda@ualberta.ca>","Diwank Singh Tomer <singh@diwank.name>","Sören Balko <Soeren.Balko@gmail.com>","Arpit Solanki <solankiarpit1997@gmail.com>","Yuki Ito <yuki@gnnk.net>","Artur Zayats <zag2art@gmail.com>"],"funding":{"type":"opencollective","url":"https://opencollective.com/peer"},"collective":{"type":"opencollective","url":"https://opencollective.com/peer"},"files":["dist/*"],"sideEffects":["lib/global.ts","lib/supports.ts"],"main":"dist/bundler.cjs","module":"dist/bundler.mjs","browser-minified":"dist/peerjs.min.js","browser-unminified":"dist/peerjs.js","browser-minified-msgpack":"dist/serializer.msgpack.mjs","types":"dist/types.d.ts","engines":{"node":">= 14"},"targets":{"types":{"source":"lib/exports.ts"},"main":{"source":"lib/exports.ts","sourceMap":{"inlineSources":true}},"module":{"source":"lib/exports.ts","includeNodeModules":["eventemitter3"],"sourceMap":{"inlineSources":true}},"browser-minified":{"context":"browser","outputFormat":"global","optimize":true,"engines":{"browsers":"chrome >= 83, edge >= 83, firefox >= 80, safari >= 15"},"source":"lib/global.ts"},"browser-unminified":{"context":"browser","outputFormat":"global","optimize":false,"engines":{"browsers":"chrome >= 83, edge >= 83, firefox >= 80, safari >= 15"},"source":"lib/global.ts"},"browser-minified-msgpack":{"context":"browser","outputFormat":"esmodule","isLibrary":true,"optimize":true,"engines":{"browsers":"chrome >= 83, edge >= 83, firefox >= 102, safari >= 15"},"source":"lib/dataconnection/StreamConnection/MsgPack.ts"}},"scripts":{"contributors":"git-authors-cli --print=false && prettier --write package.json && git add package.json package-lock.json && git commit -m \\"chore(contributors): update and sort contributors list\\"","check":"tsc --noEmit && tsc -p e2e/tsconfig.json --noEmit","watch":"parcel watch","build":"rm -rf dist && parcel build","prepublishOnly":"npm run build","test":"jest","test:watch":"jest --watch","coverage":"jest --coverage --collectCoverageFrom=\\"./lib/**\\"","format":"prettier --write .","format:check":"prettier --check .","semantic-release":"semantic-release","e2e":"wdio run e2e/wdio.local.conf.ts","e2e:bstack":"wdio run e2e/wdio.bstack.conf.ts"},"devDependencies":{"@parcel/config-default":"^2.9.3","@parcel/packager-ts":"^2.9.3","@parcel/transformer-typescript-tsc":"^2.9.3","@parcel/transformer-typescript-types":"^2.9.3","@semantic-release/changelog":"^6.0.1","@semantic-release/git":"^10.0.1","@swc/core":"^1.3.27","@swc/jest":"^0.2.24","@types/jasmine":"^4.3.4","@wdio/browserstack-service":"^8.11.2","@wdio/cli":"^8.11.2","@wdio/globals":"^8.11.2","@wdio/jasmine-framework":"^8.11.2","@wdio/local-runner":"^8.11.2","@wdio/spec-reporter":"^8.11.2","@wdio/types":"^8.10.4","http-server":"^14.1.1","jest":"^29.3.1","jest-environment-jsdom":"^29.3.1","mock-socket":"^9.0.0","parcel":"^2.9.3","prettier":"^3.0.0","semantic-release":"^21.0.0","ts-node":"^10.9.1","typescript":"^5.0.0","wdio-geckodriver-service":"^5.0.1"},"dependencies":{"@msgpack/msgpack":"^2.8.0","eventemitter3":"^4.0.7","peerjs-js-binarypack":"^2.1.0","webrtc-adapter":"^9.0.0"},"alias":{"process":false,"buffer":false}}');class eN extends eM.EventEmitter{start(e,t){this._id=e;let n=`${this._baseUrl}&id=${e}&token=${t}`;!this._socket&&this._disconnected&&(this._socket=new WebSocket(n+"&version="+ez.version),this._disconnected=!1,this._socket.onmessage=e=>{let t;try{t=JSON.parse(e.data),eI.log("Server message received:",t)}catch(t){eI.log("Invalid server message",e.data);return}this.emit(M.Message,t)},this._socket.onclose=e=>{this._disconnected||(eI.log("Socket closed.",e),this._cleanup(),this._disconnected=!0,this.emit(M.Disconnected))},this._socket.onopen=()=>{this._disconnected||(this._sendQueuedMessages(),eI.log("Socket open"),this._scheduleHeartbeat())})}_scheduleHeartbeat(){this._wsPingTimer=setTimeout(()=>{this._sendHeartbeat()},this.pingInterval)}_sendHeartbeat(){if(!this._wsOpen()){eI.log("Cannot send heartbeat, because socket closed");return}let e=JSON.stringify({type:O.Heartbeat});this._socket.send(e),this._scheduleHeartbeat()}_wsOpen(){return!!this._socket&&1===this._socket.readyState}_sendQueuedMessages(){let e=[...this._messagesQueue];for(let t of(this._messagesQueue=[],e))this.send(t)}send(e){if(this._disconnected)return;if(!this._id){this._messagesQueue.push(e);return}if(!e.type){this.emit(M.Error,"Invalid message");return}if(!this._wsOpen())return;let t=JSON.stringify(e);this._socket.send(t)}close(){this._disconnected||(this._cleanup(),this._disconnected=!0)}_cleanup(){this._socket&&(this._socket.onopen=this._socket.onmessage=this._socket.onclose=null,this._socket.close(),this._socket=void 0),clearTimeout(this._wsPingTimer)}constructor(e,t,n,r,i,o=5e3){super(),this.pingInterval=o,this._disconnected=!0,this._messagesQueue=[],this._baseUrl=(e?"wss://":"ws://")+t+":"+n+r+"peerjs?key="+i}}class e${startConnection(e){let t=this._startPeerConnection();if(this.connection.peerConnection=t,this.connection.type===w.Media&&e._stream&&this._addTracksToConnection(e._stream,t),e.originator){let n=this.connection,r={ordered:!!e.reliable},i=t.createDataChannel(n.label,r);n._initializeDataChannel(i),this._makeOffer()}else this.handleSDP("OFFER",e.sdp)}_startPeerConnection(){eI.log("Creating RTCPeerConnection.");let e=new RTCPeerConnection(this.connection.provider.options.config);return this._setupListeners(e),e}_setupListeners(e){let t=this.connection.peer,n=this.connection.connectionId,r=this.connection.type,i=this.connection.provider;eI.log("Listening for ICE candidates."),e.onicecandidate=e=>{e.candidate&&e.candidate.candidate&&(eI.log(`Received ICE candidates for ${t}:`,e.candidate),i.socket.send({type:O.Candidate,payload:{candidate:e.candidate,type:r,connectionId:n},dst:t}))},e.oniceconnectionstatechange=()=>{switch(e.iceConnectionState){case"failed":eI.log("iceConnectionState is failed, closing connections to "+t),this.connection.emitError(D.NegotiationFailed,"Negotiation of connection to "+t+" failed."),this.connection.close();break;case"closed":eI.log("iceConnectionState is closed, closing connections to "+t),this.connection.emitError(D.ConnectionClosed,"Connection to "+t+" closed."),this.connection.close();break;case"disconnected":eI.log("iceConnectionState changed to disconnected on the connection with "+t);break;case"completed":e.onicecandidate=()=>{}}this.connection.emit("iceStateChanged",e.iceConnectionState)},eI.log("Listening for data channel"),e.ondatachannel=e=>{eI.log("Received data channel");let r=e.channel;i.getConnection(t,n)._initializeDataChannel(r)},eI.log("Listening for remote stream"),e.ontrack=e=>{eI.log("Received remote stream");let r=e.streams[0],o=i.getConnection(t,n);o.type===w.Media&&this._addStreamToMediaConnection(r,o)}}cleanup(){eI.log("Cleaning up PeerConnection to "+this.connection.peer);let e=this.connection.peerConnection;if(!e)return;this.connection.peerConnection=null,e.onicecandidate=e.oniceconnectionstatechange=e.ondatachannel=e.ontrack=()=>{};let t="closed"!==e.signalingState,n=!1,r=this.connection.dataChannel;r&&(n=!!r.readyState&&"closed"!==r.readyState),(t||n)&&e.close()}async _makeOffer(){let e=this.connection.peerConnection,t=this.connection.provider;try{let n=await e.createOffer(this.connection.options.constraints);eI.log("Created offer."),this.connection.options.sdpTransform&&"function"==typeof this.connection.options.sdpTransform&&(n.sdp=this.connection.options.sdpTransform(n.sdp)||n.sdp);try{await e.setLocalDescription(n),eI.log("Set localDescription:",n,`for:${this.connection.peer}`);let r={sdp:n,type:this.connection.type,connectionId:this.connection.connectionId,metadata:this.connection.metadata};if(this.connection.type===w.Data){let e=this.connection;r={...r,label:e.label,reliable:e.reliable,serialization:e.serialization}}t.socket.send({type:O.Offer,payload:r,dst:this.connection.peer})}catch(e){"OperationError: Failed to set local offer sdp: Called in wrong state: kHaveRemoteOffer"!=e&&(t.emitError(E.WebRTC,e),eI.log("Failed to setLocalDescription, ",e))}}catch(e){t.emitError(E.WebRTC,e),eI.log("Failed to createOffer, ",e)}}async _makeAnswer(){let e=this.connection.peerConnection,t=this.connection.provider;try{let n=await e.createAnswer();eI.log("Created answer."),this.connection.options.sdpTransform&&"function"==typeof this.connection.options.sdpTransform&&(n.sdp=this.connection.options.sdpTransform(n.sdp)||n.sdp);try{await e.setLocalDescription(n),eI.log("Set localDescription:",n,`for:${this.connection.peer}`),t.socket.send({type:O.Answer,payload:{sdp:n,type:this.connection.type,connectionId:this.connection.connectionId},dst:this.connection.peer})}catch(e){t.emitError(E.WebRTC,e),eI.log("Failed to setLocalDescription, ",e)}}catch(e){t.emitError(E.WebRTC,e),eI.log("Failed to create answer, ",e)}}async handleSDP(e,t){t=new RTCSessionDescription(t);let n=this.connection.peerConnection,r=this.connection.provider;eI.log("Setting remote description",t);try{await n.setRemoteDescription(t),eI.log(`Set remoteDescription:${e} for:${this.connection.peer}`),"OFFER"===e&&await this._makeAnswer()}catch(e){r.emitError(E.WebRTC,e),eI.log("Failed to setRemoteDescription, ",e)}}async handleCandidate(e){eI.log("handleCandidate:",e);try{await this.connection.peerConnection.addIceCandidate(e),eI.log(`Added ICE candidate for:${this.connection.peer}`)}catch(e){this.connection.provider.emitError(E.WebRTC,e),eI.log("Failed to handleCandidate, ",e)}}_addTracksToConnection(e,t){if(eI.log(`add tracks from stream ${e.id} to peer connection`),!t.addTrack)return eI.error("Your browser does't support RTCPeerConnection#addTrack. Ignored.");e.getTracks().forEach(n=>{t.addTrack(n,e)})}_addStreamToMediaConnection(e,t){eI.log(`add stream ${e.id} to media connection ${t.connectionId}`),t.addStream(e)}constructor(e){this.connection=e}}class eJ extends eM.EventEmitter{emitError(e,t){eI.error("Error:",t),this.emit("error",new eV(`${e}`,t))}}class eV extends Error{constructor(e,t){"string"==typeof t?super(t):(super(),Object.assign(this,t)),this.type=e}}class eG extends eJ{get open(){return this._open}constructor(e,t,n){super(),this.peer=e,this.provider=t,this.options=n,this._open=!1,this.metadata=n.metadata}}class eW extends eG{get type(){return w.Media}get localStream(){return this._localStream}get remoteStream(){return this._remoteStream}_initializeDataChannel(e){this.dataChannel=e,this.dataChannel.onopen=()=>{eI.log(`DC#${this.connectionId} dc connection success`),this.emit("willCloseOnRemote")},this.dataChannel.onclose=()=>{eI.log(`DC#${this.connectionId} dc closed for:`,this.peer),this.close()}}addStream(e){eI.log("Receiving stream",e),this._remoteStream=e,super.emit("stream",e)}handleMessage(e){let t=e.type,n=e.payload;switch(e.type){case O.Answer:this._negotiator.handleSDP(t,n.sdp),this._open=!0;break;case O.Candidate:this._negotiator.handleCandidate(n.candidate);break;default:eI.warn(`Unrecognized message type:${t} from peer:${this.peer}`)}}answer(e,t={}){if(this._localStream){eI.warn("Local stream already exists on this MediaConnection. Are you answering a call twice?");return}for(let n of(this._localStream=e,t&&t.sdpTransform&&(this.options.sdpTransform=t.sdpTransform),this._negotiator.startConnection({...this.options._payload,_stream:e}),this.provider._getMessages(this.connectionId)))this.handleMessage(n);this._open=!0}close(){this._negotiator&&(this._negotiator.cleanup(),this._negotiator=null),this._localStream=null,this._remoteStream=null,this.provider&&(this.provider._removeConnection(this),this.provider=null),this.options&&this.options._stream&&(this.options._stream=null),this.open&&(this._open=!1,super.emit("close"))}constructor(e,t,n){super(e,t,n),this._localStream=this.options._stream,this.connectionId=this.options.connectionId||eW.ID_PREFIX+ex.randomToken(),this._negotiator=new e$(this),this._localStream&&this._negotiator.startConnection({_stream:this._localStream,originator:!0})}}eW.ID_PREFIX="mc_";class eH{_buildRequest(e){let t=this._options.secure?"https":"http",{host:n,port:r,path:i,key:o}=this._options,s=new URL(`${t}://${n}:${r}${i}${o}/${e}`);return s.searchParams.set("ts",`${Date.now()}${Math.random()}`),s.searchParams.set("version",ez.version),fetch(s.href,{referrerPolicy:this._options.referrerPolicy})}async retrieveId(){try{let e=await this._buildRequest("id");if(200!==e.status)throw Error(`Error. Status:${e.status}`);return e.text()}catch(t){eI.error("Error retrieving ID",t);let e="";throw"/"===this._options.path&&this._options.host!==ex.CLOUD_HOST&&(e=" If you passed in a `path` to your self-hosted PeerServer, you'll also need to pass in that same path when creating a new Peer."),Error("Could not get an ID from the server."+e)}}async listAllPeers(){try{let e=await this._buildRequest("peers");if(200!==e.status){if(401===e.status){let e="";throw e=this._options.host===ex.CLOUD_HOST?"It looks like you're using the cloud server. You can email team@peerjs.com to enable peer listing for your API key.":"You need to enable `allow_discovery` on your self-hosted PeerServer to use this feature.",Error("It doesn't look like you have permission to list peers IDs. "+e)}throw Error(`Error. Status:${e.status}`)}return e.json()}catch(e){throw eI.error("Error retrieving list peers",e),Error("Could not get list peers from the server."+e)}}constructor(e){this._options=e}}class eY extends eG{get type(){return w.Data}_initializeDataChannel(e){this.dataChannel=e,this.dataChannel.onopen=()=>{eI.log(`DC#${this.connectionId} dc connection success`),this._open=!0,this.emit("open")},this.dataChannel.onmessage=e=>{eI.log(`DC#${this.connectionId} dc onmessage:`,e.data)},this.dataChannel.onclose=()=>{eI.log(`DC#${this.connectionId} dc closed for:`,this.peer),this.close()}}close(e){if(e?.flush){this.send({__peerData:{type:"close"}});return}this._negotiator&&(this._negotiator.cleanup(),this._negotiator=null),this.provider&&(this.provider._removeConnection(this),this.provider=null),this.dataChannel&&(this.dataChannel.onopen=null,this.dataChannel.onmessage=null,this.dataChannel.onclose=null,this.dataChannel=null),this.open&&(this._open=!1,super.emit("close"))}send(e,t=!1){if(!this.open){this.emitError(x.NotOpenYet,"Connection is not open. You should listen for the `open` event before sending messages.");return}return this._send(e,t)}async handleMessage(e){let t=e.payload;switch(e.type){case O.Answer:await this._negotiator.handleSDP(e.type,t.sdp);break;case O.Candidate:await this._negotiator.handleCandidate(t.candidate);break;default:eI.warn("Unrecognized message type:",e.type,"from peer:",this.peer)}}constructor(e,t,n){super(e,t,n),this.connectionId=this.options.connectionId||eY.ID_PREFIX+eE(),this.label=this.options.label||this.connectionId,this.reliable=!!this.options.reliable,this._negotiator=new e$(this),this._negotiator.startConnection(this.options._payload||{originator:!0,reliable:this.reliable})}}eY.ID_PREFIX="dc_",eY.MAX_BUFFERED_AMOUNT=8388608;class eK extends eY{get bufferSize(){return this._bufferSize}_initializeDataChannel(e){super._initializeDataChannel(e),this.dataChannel.binaryType="arraybuffer",this.dataChannel.addEventListener("message",e=>this._handleDataMessage(e))}_bufferedSend(e){(this._buffering||!this._trySend(e))&&(this._buffer.push(e),this._bufferSize=this._buffer.length)}_trySend(e){if(!this.open)return!1;if(this.dataChannel.bufferedAmount>eY.MAX_BUFFERED_AMOUNT)return this._buffering=!0,setTimeout(()=>{this._buffering=!1,this._tryBuffer()},50),!1;try{this.dataChannel.send(e)}catch(e){return eI.error(`DC#:${this.connectionId} Error when sending:`,e),this._buffering=!0,this.close(),!1}return!0}_tryBuffer(){if(!this.open||0===this._buffer.length)return;let e=this._buffer[0];this._trySend(e)&&(this._buffer.shift(),this._bufferSize=this._buffer.length,this._tryBuffer())}close(e){if(e?.flush){this.send({__peerData:{type:"close"}});return}this._buffer=[],this._bufferSize=0,super.close()}constructor(...e){super(...e),this._buffer=[],this._bufferSize=0,this._buffering=!1}}class eX extends eK{close(e){super.close(e),this._chunkedData={}}_handleDataMessage({data:e}){let t=i(e),n=t.__peerData;if(n){if("close"===n.type){this.close();return}this._handleChunk(t);return}this.emit("data",t)}_handleChunk(e){let t=e.__peerData,n=this._chunkedData[t]||{data:[],count:0,total:e.total};if(n.data[e.n]=new Uint8Array(e.data),n.count++,this._chunkedData[t]=n,n.total===n.count){delete this._chunkedData[t];let e=function(e){let t=0;for(let n of e)t+=n.byteLength;let n=new Uint8Array(t),r=0;for(let t of e)n.set(t,r),r+=t.byteLength;return n}(n.data);this._handleDataMessage({data:e})}}_send(e,t){let n=o(e);if(n instanceof Promise)return this._send_blob(n);if(!t&&n.byteLength>this.chunker.chunkedMTU){this._sendChunks(n);return}this._bufferedSend(n)}async _send_blob(e){let t=await e;if(t.byteLength>this.chunker.chunkedMTU){this._sendChunks(t);return}this._bufferedSend(t)}_sendChunks(e){let t=this.chunker.chunk(e);for(let e of(eI.log(`DC#${this.connectionId} Try to send ${t.length} chunks...`),t))this.send(e,!0)}constructor(e,t,r){super(e,t,r),this.chunker=new n,this.serialization=I.Binary,this._chunkedData={}}}class eq extends eK{_handleDataMessage({data:e}){super.emit("data",e)}_send(e,t){this._bufferedSend(e)}constructor(...e){super(...e),this.serialization=I.None}}class eQ extends eK{_handleDataMessage({data:e}){let t=this.parse(this.decoder.decode(e)),n=t.__peerData;if(n&&"close"===n.type){this.close();return}this.emit("data",t)}_send(e,t){let n=this.encoder.encode(this.stringify(e));if(n.byteLength>=ex.chunkedMTU){this.emitError(x.MessageToBig,"Message too big for JSON channel");return}this._bufferedSend(n)}constructor(...e){super(...e),this.serialization=I.JSON,this.encoder=new TextEncoder,this.decoder=new TextDecoder,this.stringify=JSON.stringify,this.parse=JSON.parse}}class eZ extends eJ{get id(){return this._id}get options(){return this._options}get open(){return this._open}get socket(){return this._socket}get connections(){let e=Object.create(null);for(let[t,n]of this._connections)e[t]=n;return e}get destroyed(){return this._destroyed}get disconnected(){return this._disconnected}_createServerConnection(){let e=new eN(this._options.secure,this._options.host,this._options.port,this._options.path,this._options.key,this._options.pingInterval);return e.on(M.Message,e=>{this._handleMessage(e)}),e.on(M.Error,e=>{this._abort(E.SocketError,e)}),e.on(M.Disconnected,()=>{this.disconnected||(this.emitError(E.Network,"Lost connection to server."),this.disconnect())}),e.on(M.Close,()=>{this.disconnected||this._abort(E.SocketClosed,"Underlying socket is already closed.")}),e}_initialize(e){this._id=e,this.socket.start(e,this._options.token)}_handleMessage(e){let t=e.type,n=e.payload,r=e.src;switch(t){case O.Open:this._lastServerId=this.id,this._open=!0,this.emit("open",this.id);break;case O.Error:this._abort(E.ServerError,n.msg);break;case O.IdTaken:this._abort(E.UnavailableID,`ID "${this.id}" is taken`);break;case O.InvalidKey:this._abort(E.InvalidKey,`API KEY "${this._options.key}" is invalid`);break;case O.Leave:eI.log(`Received leave message from ${r}`),this._cleanupPeer(r),this._connections.delete(r);break;case O.Expire:this.emitError(E.PeerUnavailable,`Could not connect to peer ${r}`);break;case O.Offer:{let e=n.connectionId,t=this.getConnection(r,e);if(t&&(t.close(),eI.warn(`Offer received for existing Connection ID:${e}`)),n.type===w.Media){let i=new eW(r,this,{connectionId:e,_payload:n,metadata:n.metadata});t=i,this._addConnection(r,t),this.emit("call",i)}else if(n.type===w.Data){let i=new this._serializers[n.serialization](r,this,{connectionId:e,_payload:n,metadata:n.metadata,label:n.label,serialization:n.serialization,reliable:n.reliable});t=i,this._addConnection(r,t),this.emit("connection",i)}else{eI.warn(`Received malformed connection type:${n.type}`);return}for(let n of this._getMessages(e))t.handleMessage(n);break}default:{if(!n){eI.warn(`You received a malformed message from ${r} of type ${t}`);return}let i=n.connectionId,o=this.getConnection(r,i);o&&o.peerConnection?o.handleMessage(e):i?this._storeMessage(i,e):eI.warn("You received an unrecognized message:",e)}}}_storeMessage(e,t){this._lostMessages.has(e)||this._lostMessages.set(e,[]),this._lostMessages.get(e).push(t)}_getMessages(e){let t=this._lostMessages.get(e);return t?(this._lostMessages.delete(e),t):[]}connect(e,t={}){if(t={serialization:"default",...t},this.disconnected){eI.warn("You cannot connect to a new Peer because you called .disconnect() on this Peer and ended your connection with the server. You can create a new Peer to reconnect, or call reconnect on this peer if you believe its ID to still be available."),this.emitError(E.Disconnected,"Cannot connect to new Peer after disconnecting from server.");return}let n=new this._serializers[t.serialization](e,this,t);return this._addConnection(e,n),n}call(e,t,n={}){if(this.disconnected){eI.warn("You cannot connect to a new Peer because you called .disconnect() on this Peer and ended your connection with the server. You can create a new Peer to reconnect."),this.emitError(E.Disconnected,"Cannot connect to new Peer after disconnecting from server.");return}if(!t){eI.error("To call a peer, you must provide a stream from your browser's `getUserMedia`.");return}let r=new eW(e,this,{...n,_stream:t});return this._addConnection(e,r),r}_addConnection(e,t){eI.log(`add connection ${t.type}:${t.connectionId} to peerId:${e}`),this._connections.has(e)||this._connections.set(e,[]),this._connections.get(e).push(t)}_removeConnection(e){let t=this._connections.get(e.peer);if(t){let n=t.indexOf(e);-1!==n&&t.splice(n,1)}this._lostMessages.delete(e.connectionId)}getConnection(e,t){let n=this._connections.get(e);if(!n)return null;for(let e of n)if(e.connectionId===t)return e;return null}_delayedAbort(e,t){setTimeout(()=>{this._abort(e,t)},0)}_abort(e,t){eI.error("Aborting!"),this.emitError(e,t),this._lastServerId?this.disconnect():this.destroy()}destroy(){this.destroyed||(eI.log(`Destroy peer with ID:${this.id}`),this.disconnect(),this._cleanup(),this._destroyed=!0,this.emit("close"))}_cleanup(){for(let e of this._connections.keys())this._cleanupPeer(e),this._connections.delete(e);this.socket.removeAllListeners()}_cleanupPeer(e){let t=this._connections.get(e);if(t)for(let e of t)e.close()}disconnect(){if(this.disconnected)return;let e=this.id;eI.log(`Disconnect peer with ID:${e}`),this._disconnected=!0,this._open=!1,this.socket.close(),this._lastServerId=e,this._id=null,this.emit("disconnected",e)}reconnect(){if(this.disconnected&&!this.destroyed)eI.log(`Attempting reconnection to server with ID ${this._lastServerId}`),this._disconnected=!1,this._initialize(this._lastServerId);else if(this.destroyed)throw Error("This peer cannot reconnect to the server. It has already been destroyed.");else if(this.disconnected||this.open)throw Error(`Peer ${this.id} cannot reconnect because it is not disconnected from the server!`);else eI.error("In a hurry? We're still trying to make the initial connection!")}listAllPeers(e=e=>{}){this._api.listAllPeers().then(t=>e(t)).catch(e=>this._abort(E.ServerError,e))}constructor(e,t){let n;if(super(),this._serializers={raw:eq,json:eQ,binary:eX,"binary-utf8":eX,default:eX},this._id=null,this._lastServerId=null,this._destroyed=!1,this._disconnected=!1,this._open=!1,this._connections=new Map,this._lostMessages=new Map,e&&e.constructor==Object?t=e:e&&(n=e.toString()),t={debug:0,host:ex.CLOUD_HOST,port:ex.CLOUD_PORT,path:"/",key:eZ.DEFAULT_KEY,token:ex.randomToken(),config:ex.defaultConfig,referrerPolicy:"strict-origin-when-cross-origin",serializers:{},...t},this._options=t,this._serializers={...this._serializers,...this.options.serializers},"/"===this._options.host&&(this._options.host=window.location.hostname),this._options.path&&("/"!==this._options.path[0]&&(this._options.path="/"+this._options.path),"/"!==this._options.path[this._options.path.length-1]&&(this._options.path+="/")),void 0===this._options.secure&&this._options.host!==ex.CLOUD_HOST?this._options.secure=ex.isSecure():this._options.host==ex.CLOUD_HOST&&(this._options.secure=!0),this._options.logFunction&&eI.setLogFunction(this._options.logFunction),eI.logLevel=this._options.debug||0,this._api=new eH(t),this._socket=this._createServerConnection(),!ex.supports.audioVideo&&!ex.supports.data){this._delayedAbort(E.BrowserIncompatible,"The current browser does not support WebRTC");return}if(n&&!ex.validateId(n)){this._delayedAbort(E.InvalidID,`ID "${n}" is invalid`);return}n?this._initialize(n):this._api.retrieveId().then(e=>this._initialize(e)).catch(e=>this._abort(E.ServerError,e))}}eZ.DEFAULT_KEY="peerjs",window.peerjs={Peer:eZ,util:ex},window.Peer=eZ})();
 
 </script>
+<script>//---------------------------------------------------------------------
+//
+// QR Code Generator for JavaScript
+//
+// Copyright (c) 2009 Kazuhiko Arase
+//
+// URL: http://www.d-project.com/
+//
+// Licensed under the MIT license:
+//  http://www.opensource.org/licenses/mit-license.php
+//
+// The word 'QR Code' is registered trademark of
+// DENSO WAVE INCORPORATED
+//  http://www.denso-wave.com/qrcode/faqpatent-e.html
+//
+//---------------------------------------------------------------------
+
+var qrcode = function() {
+
+  //---------------------------------------------------------------------
+  // qrcode
+  //---------------------------------------------------------------------
+
+  /**
+   * qrcode
+   * @param typeNumber 1 to 40
+   * @param errorCorrectionLevel 'L','M','Q','H'
+   */
+  var qrcode = function(typeNumber, errorCorrectionLevel) {
+
+    var PAD0 = 0xEC;
+    var PAD1 = 0x11;
+
+    var _typeNumber = typeNumber;
+    var _errorCorrectionLevel = QRErrorCorrectionLevel[errorCorrectionLevel];
+    var _modules = null;
+    var _moduleCount = 0;
+    var _dataCache = null;
+    var _dataList = [];
+
+    var _this = {};
+
+    var makeImpl = function(test, maskPattern) {
+
+      _moduleCount = _typeNumber * 4 + 17;
+      _modules = function(moduleCount) {
+        var modules = new Array(moduleCount);
+        for (var row = 0; row < moduleCount; row += 1) {
+          modules[row] = new Array(moduleCount);
+          for (var col = 0; col < moduleCount; col += 1) {
+            modules[row][col] = null;
+          }
+        }
+        return modules;
+      }(_moduleCount);
+
+      setupPositionProbePattern(0, 0);
+      setupPositionProbePattern(_moduleCount - 7, 0);
+      setupPositionProbePattern(0, _moduleCount - 7);
+      setupPositionAdjustPattern();
+      setupTimingPattern();
+      setupTypeInfo(test, maskPattern);
+
+      if (_typeNumber >= 7) {
+        setupTypeNumber(test);
+      }
+
+      if (_dataCache == null) {
+        _dataCache = createData(_typeNumber, _errorCorrectionLevel, _dataList);
+      }
+
+      mapData(_dataCache, maskPattern);
+    };
+
+    var setupPositionProbePattern = function(row, col) {
+
+      for (var r = -1; r <= 7; r += 1) {
+
+        if (row + r <= -1 || _moduleCount <= row + r) continue;
+
+        for (var c = -1; c <= 7; c += 1) {
+
+          if (col + c <= -1 || _moduleCount <= col + c) continue;
+
+          if ( (0 <= r && r <= 6 && (c == 0 || c == 6) )
+              || (0 <= c && c <= 6 && (r == 0 || r == 6) )
+              || (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+            _modules[row + r][col + c] = true;
+          } else {
+            _modules[row + r][col + c] = false;
+          }
+        }
+      }
+    };
+
+    var getBestMaskPattern = function() {
+
+      var minLostPoint = 0;
+      var pattern = 0;
+
+      for (var i = 0; i < 8; i += 1) {
+
+        makeImpl(true, i);
+
+        var lostPoint = QRUtil.getLostPoint(_this);
+
+        if (i == 0 || minLostPoint > lostPoint) {
+          minLostPoint = lostPoint;
+          pattern = i;
+        }
+      }
+
+      return pattern;
+    };
+
+    var setupTimingPattern = function() {
+
+      for (var r = 8; r < _moduleCount - 8; r += 1) {
+        if (_modules[r][6] != null) {
+          continue;
+        }
+        _modules[r][6] = (r % 2 == 0);
+      }
+
+      for (var c = 8; c < _moduleCount - 8; c += 1) {
+        if (_modules[6][c] != null) {
+          continue;
+        }
+        _modules[6][c] = (c % 2 == 0);
+      }
+    };
+
+    var setupPositionAdjustPattern = function() {
+
+      var pos = QRUtil.getPatternPosition(_typeNumber);
+
+      for (var i = 0; i < pos.length; i += 1) {
+
+        for (var j = 0; j < pos.length; j += 1) {
+
+          var row = pos[i];
+          var col = pos[j];
+
+          if (_modules[row][col] != null) {
+            continue;
+          }
+
+          for (var r = -2; r <= 2; r += 1) {
+
+            for (var c = -2; c <= 2; c += 1) {
+
+              if (r == -2 || r == 2 || c == -2 || c == 2
+                  || (r == 0 && c == 0) ) {
+                _modules[row + r][col + c] = true;
+              } else {
+                _modules[row + r][col + c] = false;
+              }
+            }
+          }
+        }
+      }
+    };
+
+    var setupTypeNumber = function(test) {
+
+      var bits = QRUtil.getBCHTypeNumber(_typeNumber);
+
+      for (var i = 0; i < 18; i += 1) {
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+        _modules[Math.floor(i / 3)][i % 3 + _moduleCount - 8 - 3] = mod;
+      }
+
+      for (var i = 0; i < 18; i += 1) {
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+        _modules[i % 3 + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
+      }
+    };
+
+    var setupTypeInfo = function(test, maskPattern) {
+
+      var data = (_errorCorrectionLevel << 3) | maskPattern;
+      var bits = QRUtil.getBCHTypeInfo(data);
+
+      // vertical
+      for (var i = 0; i < 15; i += 1) {
+
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+
+        if (i < 6) {
+          _modules[i][8] = mod;
+        } else if (i < 8) {
+          _modules[i + 1][8] = mod;
+        } else {
+          _modules[_moduleCount - 15 + i][8] = mod;
+        }
+      }
+
+      // horizontal
+      for (var i = 0; i < 15; i += 1) {
+
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+
+        if (i < 8) {
+          _modules[8][_moduleCount - i - 1] = mod;
+        } else if (i < 9) {
+          _modules[8][15 - i - 1 + 1] = mod;
+        } else {
+          _modules[8][15 - i - 1] = mod;
+        }
+      }
+
+      // fixed module
+      _modules[_moduleCount - 8][8] = (!test);
+    };
+
+    var mapData = function(data, maskPattern) {
+
+      var inc = -1;
+      var row = _moduleCount - 1;
+      var bitIndex = 7;
+      var byteIndex = 0;
+      var maskFunc = QRUtil.getMaskFunction(maskPattern);
+
+      for (var col = _moduleCount - 1; col > 0; col -= 2) {
+
+        if (col == 6) col -= 1;
+
+        while (true) {
+
+          for (var c = 0; c < 2; c += 1) {
+
+            if (_modules[row][col - c] == null) {
+
+              var dark = false;
+
+              if (byteIndex < data.length) {
+                dark = ( ( (data[byteIndex] >>> bitIndex) & 1) == 1);
+              }
+
+              var mask = maskFunc(row, col - c);
+
+              if (mask) {
+                dark = !dark;
+              }
+
+              _modules[row][col - c] = dark;
+              bitIndex -= 1;
+
+              if (bitIndex == -1) {
+                byteIndex += 1;
+                bitIndex = 7;
+              }
+            }
+          }
+
+          row += inc;
+
+          if (row < 0 || _moduleCount <= row) {
+            row -= inc;
+            inc = -inc;
+            break;
+          }
+        }
+      }
+    };
+
+    var createBytes = function(buffer, rsBlocks) {
+
+      var offset = 0;
+
+      var maxDcCount = 0;
+      var maxEcCount = 0;
+
+      var dcdata = new Array(rsBlocks.length);
+      var ecdata = new Array(rsBlocks.length);
+
+      for (var r = 0; r < rsBlocks.length; r += 1) {
+
+        var dcCount = rsBlocks[r].dataCount;
+        var ecCount = rsBlocks[r].totalCount - dcCount;
+
+        maxDcCount = Math.max(maxDcCount, dcCount);
+        maxEcCount = Math.max(maxEcCount, ecCount);
+
+        dcdata[r] = new Array(dcCount);
+
+        for (var i = 0; i < dcdata[r].length; i += 1) {
+          dcdata[r][i] = 0xff & buffer.getBuffer()[i + offset];
+        }
+        offset += dcCount;
+
+        var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+        var rawPoly = qrPolynomial(dcdata[r], rsPoly.getLength() - 1);
+
+        var modPoly = rawPoly.mod(rsPoly);
+        ecdata[r] = new Array(rsPoly.getLength() - 1);
+        for (var i = 0; i < ecdata[r].length; i += 1) {
+          var modIndex = i + modPoly.getLength() - ecdata[r].length;
+          ecdata[r][i] = (modIndex >= 0)? modPoly.getAt(modIndex) : 0;
+        }
+      }
+
+      var totalCodeCount = 0;
+      for (var i = 0; i < rsBlocks.length; i += 1) {
+        totalCodeCount += rsBlocks[i].totalCount;
+      }
+
+      var data = new Array(totalCodeCount);
+      var index = 0;
+
+      for (var i = 0; i < maxDcCount; i += 1) {
+        for (var r = 0; r < rsBlocks.length; r += 1) {
+          if (i < dcdata[r].length) {
+            data[index] = dcdata[r][i];
+            index += 1;
+          }
+        }
+      }
+
+      for (var i = 0; i < maxEcCount; i += 1) {
+        for (var r = 0; r < rsBlocks.length; r += 1) {
+          if (i < ecdata[r].length) {
+            data[index] = ecdata[r][i];
+            index += 1;
+          }
+        }
+      }
+
+      return data;
+    };
+
+    var createData = function(typeNumber, errorCorrectionLevel, dataList) {
+
+      var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
+
+      var buffer = qrBitBuffer();
+
+      for (var i = 0; i < dataList.length; i += 1) {
+        var data = dataList[i];
+        buffer.put(data.getMode(), 4);
+        buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+        data.write(buffer);
+      }
+
+      // calc num max data.
+      var totalDataCount = 0;
+      for (var i = 0; i < rsBlocks.length; i += 1) {
+        totalDataCount += rsBlocks[i].dataCount;
+      }
+
+      if (buffer.getLengthInBits() > totalDataCount * 8) {
+        throw 'code length overflow. ('
+          + buffer.getLengthInBits()
+          + '>'
+          + totalDataCount * 8
+          + ')';
+      }
+
+      // end code
+      if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+        buffer.put(0, 4);
+      }
+
+      // padding
+      while (buffer.getLengthInBits() % 8 != 0) {
+        buffer.putBit(false);
+      }
+
+      // padding
+      while (true) {
+
+        if (buffer.getLengthInBits() >= totalDataCount * 8) {
+          break;
+        }
+        buffer.put(PAD0, 8);
+
+        if (buffer.getLengthInBits() >= totalDataCount * 8) {
+          break;
+        }
+        buffer.put(PAD1, 8);
+      }
+
+      return createBytes(buffer, rsBlocks);
+    };
+
+    _this.addData = function(data, mode) {
+
+      mode = mode || 'Byte';
+
+      var newData = null;
+
+      switch(mode) {
+      case 'Numeric' :
+        newData = qrNumber(data);
+        break;
+      case 'Alphanumeric' :
+        newData = qrAlphaNum(data);
+        break;
+      case 'Byte' :
+        newData = qr8BitByte(data);
+        break;
+      case 'Kanji' :
+        newData = qrKanji(data);
+        break;
+      default :
+        throw 'mode:' + mode;
+      }
+
+      _dataList.push(newData);
+      _dataCache = null;
+    };
+
+    _this.isDark = function(row, col) {
+      if (row < 0 || _moduleCount <= row || col < 0 || _moduleCount <= col) {
+        throw row + ',' + col;
+      }
+      return _modules[row][col];
+    };
+
+    _this.getModuleCount = function() {
+      return _moduleCount;
+    };
+
+    _this.make = function() {
+      if (_typeNumber < 1) {
+        var typeNumber = 1;
+
+        for (; typeNumber < 40; typeNumber++) {
+          var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, _errorCorrectionLevel);
+          var buffer = qrBitBuffer();
+
+          for (var i = 0; i < _dataList.length; i++) {
+            var data = _dataList[i];
+            buffer.put(data.getMode(), 4);
+            buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+            data.write(buffer);
+          }
+
+          var totalDataCount = 0;
+          for (var i = 0; i < rsBlocks.length; i++) {
+            totalDataCount += rsBlocks[i].dataCount;
+          }
+
+          if (buffer.getLengthInBits() <= totalDataCount * 8) {
+            break;
+          }
+        }
+
+        _typeNumber = typeNumber;
+      }
+
+      makeImpl(false, getBestMaskPattern() );
+    };
+
+    _this.createTableTag = function(cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var qrHtml = '';
+
+      qrHtml += '<table style="';
+      qrHtml += ' border-width: 0px; border-style: none;';
+      qrHtml += ' border-collapse: collapse;';
+      qrHtml += ' padding: 0px; margin: ' + margin + 'px;';
+      qrHtml += '">';
+      qrHtml += '<tbody>';
+
+      for (var r = 0; r < _this.getModuleCount(); r += 1) {
+
+        qrHtml += '<tr>';
+
+        for (var c = 0; c < _this.getModuleCount(); c += 1) {
+          qrHtml += '<td style="';
+          qrHtml += ' border-width: 0px; border-style: none;';
+          qrHtml += ' border-collapse: collapse;';
+          qrHtml += ' padding: 0px; margin: 0px;';
+          qrHtml += ' width: ' + cellSize + 'px;';
+          qrHtml += ' height: ' + cellSize + 'px;';
+          qrHtml += ' background-color: ';
+          qrHtml += _this.isDark(r, c)? '#000000' : '#ffffff';
+          qrHtml += ';';
+          qrHtml += '"/>';
+        }
+
+        qrHtml += '</tr>';
+      }
+
+      qrHtml += '</tbody>';
+      qrHtml += '</table>';
+
+      return qrHtml;
+    };
+
+    _this.createSvgTag = function(cellSize, margin, alt, title) {
+
+      var opts = {};
+      if (typeof arguments[0] == 'object') {
+        // Called by options.
+        opts = arguments[0];
+        // overwrite cellSize and margin.
+        cellSize = opts.cellSize;
+        margin = opts.margin;
+        alt = opts.alt;
+        title = opts.title;
+      }
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      // Compose alt property surrogate
+      alt = (typeof alt === 'string') ? {text: alt} : alt || {};
+      alt.text = alt.text || null;
+      alt.id = (alt.text) ? alt.id || 'qrcode-description' : null;
+
+      // Compose title property surrogate
+      title = (typeof title === 'string') ? {text: title} : title || {};
+      title.text = title.text || null;
+      title.id = (title.text) ? title.id || 'qrcode-title' : null;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var c, mc, r, mr, qrSvg='', rect;
+
+      rect = 'l' + cellSize + ',0 0,' + cellSize +
+        ' -' + cellSize + ',0 0,-' + cellSize + 'z ';
+
+      qrSvg += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"';
+      qrSvg += !opts.scalable ? ' width="' + size + 'px" height="' + size + 'px"' : '';
+      qrSvg += ' viewBox="0 0 ' + size + ' ' + size + '" ';
+      qrSvg += ' preserveAspectRatio="xMinYMin meet"';
+      qrSvg += (title.text || alt.text) ? ' role="img" aria-labelledby="' +
+          escapeXml([title.id, alt.id].join(' ').trim() ) + '"' : '';
+      qrSvg += '>';
+      qrSvg += (title.text) ? '<title id="' + escapeXml(title.id) + '">' +
+          escapeXml(title.text) + '</title>' : '';
+      qrSvg += (alt.text) ? '<description id="' + escapeXml(alt.id) + '">' +
+          escapeXml(alt.text) + '</description>' : '';
+      qrSvg += '<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>';
+      qrSvg += '<path d="';
+
+      for (r = 0; r < _this.getModuleCount(); r += 1) {
+        mr = r * cellSize + margin;
+        for (c = 0; c < _this.getModuleCount(); c += 1) {
+          if (_this.isDark(r, c) ) {
+            mc = c*cellSize+margin;
+            qrSvg += 'M' + mc + ',' + mr + rect;
+          }
+        }
+      }
+
+      qrSvg += '" stroke="transparent" fill="black"/>';
+      qrSvg += '</svg>';
+
+      return qrSvg;
+    };
+
+    _this.createDataURL = function(cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      return createDataURL(size, size, function(x, y) {
+        if (min <= x && x < max && min <= y && y < max) {
+          var c = Math.floor( (x - min) / cellSize);
+          var r = Math.floor( (y - min) / cellSize);
+          return _this.isDark(r, c)? 0 : 1;
+        } else {
+          return 1;
+        }
+      } );
+    };
+
+    _this.createImgTag = function(cellSize, margin, alt) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+
+      var img = '';
+      img += '<img';
+      img += '\u0020src="';
+      img += _this.createDataURL(cellSize, margin);
+      img += '"';
+      img += '\u0020width="';
+      img += size;
+      img += '"';
+      img += '\u0020height="';
+      img += size;
+      img += '"';
+      if (alt) {
+        img += '\u0020alt="';
+        img += escapeXml(alt);
+        img += '"';
+      }
+      img += '/>';
+
+      return img;
+    };
+
+    var escapeXml = function(s) {
+      var escaped = '';
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charAt(i);
+        switch(c) {
+        case '<': escaped += '&lt;'; break;
+        case '>': escaped += '&gt;'; break;
+        case '&': escaped += '&amp;'; break;
+        case '"': escaped += '&quot;'; break;
+        default : escaped += c; break;
+        }
+      }
+      return escaped;
+    };
+
+    var _createHalfASCII = function(margin) {
+      var cellSize = 1;
+      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      var y, x, r1, r2, p;
+
+      var blocks = {
+        '██': '█',
+        '█ ': '▀',
+        ' █': '▄',
+        '  ': ' '
+      };
+
+      var blocksLastLineNoMargin = {
+        '██': '▀',
+        '█ ': '▀',
+        ' █': ' ',
+        '  ': ' '
+      };
+
+      var ascii = '';
+      for (y = 0; y < size; y += 2) {
+        r1 = Math.floor((y - min) / cellSize);
+        r2 = Math.floor((y + 1 - min) / cellSize);
+        for (x = 0; x < size; x += 1) {
+          p = '█';
+
+          if (min <= x && x < max && min <= y && y < max && _this.isDark(r1, Math.floor((x - min) / cellSize))) {
+            p = ' ';
+          }
+
+          if (min <= x && x < max && min <= y+1 && y+1 < max && _this.isDark(r2, Math.floor((x - min) / cellSize))) {
+            p += ' ';
+          }
+          else {
+            p += '█';
+          }
+
+          // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
+          ascii += (margin < 1 && y+1 >= max) ? blocksLastLineNoMargin[p] : blocks[p];
+        }
+
+        ascii += '\n';
+      }
+
+      if (size % 2 && margin > 0) {
+        return ascii.substring(0, ascii.length - size - 1) + Array(size+1).join('▀');
+      }
+
+      return ascii.substring(0, ascii.length-1);
+    };
+
+    _this.createASCII = function(cellSize, margin) {
+      cellSize = cellSize || 1;
+
+      if (cellSize < 2) {
+        return _createHalfASCII(margin);
+      }
+
+      cellSize -= 1;
+      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      var y, x, r, p;
+
+      var white = Array(cellSize+1).join('██');
+      var black = Array(cellSize+1).join('  ');
+
+      var ascii = '';
+      var line = '';
+      for (y = 0; y < size; y += 1) {
+        r = Math.floor( (y - min) / cellSize);
+        line = '';
+        for (x = 0; x < size; x += 1) {
+          p = 1;
+
+          if (min <= x && x < max && min <= y && y < max && _this.isDark(r, Math.floor((x - min) / cellSize))) {
+            p = 0;
+          }
+
+          // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
+          line += p ? white : black;
+        }
+
+        for (r = 0; r < cellSize; r += 1) {
+          ascii += line + '\n';
+        }
+      }
+
+      return ascii.substring(0, ascii.length-1);
+    };
+
+    _this.renderTo2dContext = function(context, cellSize) {
+      cellSize = cellSize || 2;
+      var length = _this.getModuleCount();
+      for (var row = 0; row < length; row++) {
+        for (var col = 0; col < length; col++) {
+          context.fillStyle = _this.isDark(row, col) ? 'black' : 'white';
+          context.fillRect(row * cellSize, col * cellSize, cellSize, cellSize);
+        }
+      }
+    }
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrcode.stringToBytes
+  //---------------------------------------------------------------------
+
+  qrcode.stringToBytesFuncs = {
+    'default' : function(s) {
+      var bytes = [];
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charCodeAt(i);
+        bytes.push(c & 0xff);
+      }
+      return bytes;
+    }
+  };
+
+  qrcode.stringToBytes = qrcode.stringToBytesFuncs['default'];
+
+  //---------------------------------------------------------------------
+  // qrcode.createStringToBytes
+  //---------------------------------------------------------------------
+
+  /**
+   * @param unicodeData base64 string of byte array.
+   * [16bit Unicode],[16bit Bytes], ...
+   * @param numChars
+   */
+  qrcode.createStringToBytes = function(unicodeData, numChars) {
+
+    // create conversion map.
+
+    var unicodeMap = function() {
+
+      var bin = base64DecodeInputStream(unicodeData);
+      var read = function() {
+        var b = bin.read();
+        if (b == -1) throw 'eof';
+        return b;
+      };
+
+      var count = 0;
+      var unicodeMap = {};
+      while (true) {
+        var b0 = bin.read();
+        if (b0 == -1) break;
+        var b1 = read();
+        var b2 = read();
+        var b3 = read();
+        var k = String.fromCharCode( (b0 << 8) | b1);
+        var v = (b2 << 8) | b3;
+        unicodeMap[k] = v;
+        count += 1;
+      }
+      if (count != numChars) {
+        throw count + ' != ' + numChars;
+      }
+
+      return unicodeMap;
+    }();
+
+    var unknownChar = '?'.charCodeAt(0);
+
+    return function(s) {
+      var bytes = [];
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charCodeAt(i);
+        if (c < 128) {
+          bytes.push(c);
+        } else {
+          var b = unicodeMap[s.charAt(i)];
+          if (typeof b == 'number') {
+            if ( (b & 0xff) == b) {
+              // 1byte
+              bytes.push(b);
+            } else {
+              // 2bytes
+              bytes.push(b >>> 8);
+              bytes.push(b & 0xff);
+            }
+          } else {
+            bytes.push(unknownChar);
+          }
+        }
+      }
+      return bytes;
+    };
+  };
+
+  //---------------------------------------------------------------------
+  // QRMode
+  //---------------------------------------------------------------------
+
+  var QRMode = {
+    MODE_NUMBER :    1 << 0,
+    MODE_ALPHA_NUM : 1 << 1,
+    MODE_8BIT_BYTE : 1 << 2,
+    MODE_KANJI :     1 << 3
+  };
+
+  //---------------------------------------------------------------------
+  // QRErrorCorrectionLevel
+  //---------------------------------------------------------------------
+
+  var QRErrorCorrectionLevel = {
+    L : 1,
+    M : 0,
+    Q : 3,
+    H : 2
+  };
+
+  //---------------------------------------------------------------------
+  // QRMaskPattern
+  //---------------------------------------------------------------------
+
+  var QRMaskPattern = {
+    PATTERN000 : 0,
+    PATTERN001 : 1,
+    PATTERN010 : 2,
+    PATTERN011 : 3,
+    PATTERN100 : 4,
+    PATTERN101 : 5,
+    PATTERN110 : 6,
+    PATTERN111 : 7
+  };
+
+  //---------------------------------------------------------------------
+  // QRUtil
+  //---------------------------------------------------------------------
+
+  var QRUtil = function() {
+
+    var PATTERN_POSITION_TABLE = [
+      [],
+      [6, 18],
+      [6, 22],
+      [6, 26],
+      [6, 30],
+      [6, 34],
+      [6, 22, 38],
+      [6, 24, 42],
+      [6, 26, 46],
+      [6, 28, 50],
+      [6, 30, 54],
+      [6, 32, 58],
+      [6, 34, 62],
+      [6, 26, 46, 66],
+      [6, 26, 48, 70],
+      [6, 26, 50, 74],
+      [6, 30, 54, 78],
+      [6, 30, 56, 82],
+      [6, 30, 58, 86],
+      [6, 34, 62, 90],
+      [6, 28, 50, 72, 94],
+      [6, 26, 50, 74, 98],
+      [6, 30, 54, 78, 102],
+      [6, 28, 54, 80, 106],
+      [6, 32, 58, 84, 110],
+      [6, 30, 58, 86, 114],
+      [6, 34, 62, 90, 118],
+      [6, 26, 50, 74, 98, 122],
+      [6, 30, 54, 78, 102, 126],
+      [6, 26, 52, 78, 104, 130],
+      [6, 30, 56, 82, 108, 134],
+      [6, 34, 60, 86, 112, 138],
+      [6, 30, 58, 86, 114, 142],
+      [6, 34, 62, 90, 118, 146],
+      [6, 30, 54, 78, 102, 126, 150],
+      [6, 24, 50, 76, 102, 128, 154],
+      [6, 28, 54, 80, 106, 132, 158],
+      [6, 32, 58, 84, 110, 136, 162],
+      [6, 26, 54, 82, 110, 138, 166],
+      [6, 30, 58, 86, 114, 142, 170]
+    ];
+    var G15 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
+    var G18 = (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
+    var G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
+
+    var _this = {};
+
+    var getBCHDigit = function(data) {
+      var digit = 0;
+      while (data != 0) {
+        digit += 1;
+        data >>>= 1;
+      }
+      return digit;
+    };
+
+    _this.getBCHTypeInfo = function(data) {
+      var d = data << 10;
+      while (getBCHDigit(d) - getBCHDigit(G15) >= 0) {
+        d ^= (G15 << (getBCHDigit(d) - getBCHDigit(G15) ) );
+      }
+      return ( (data << 10) | d) ^ G15_MASK;
+    };
+
+    _this.getBCHTypeNumber = function(data) {
+      var d = data << 12;
+      while (getBCHDigit(d) - getBCHDigit(G18) >= 0) {
+        d ^= (G18 << (getBCHDigit(d) - getBCHDigit(G18) ) );
+      }
+      return (data << 12) | d;
+    };
+
+    _this.getPatternPosition = function(typeNumber) {
+      return PATTERN_POSITION_TABLE[typeNumber - 1];
+    };
+
+    _this.getMaskFunction = function(maskPattern) {
+
+      switch (maskPattern) {
+
+      case QRMaskPattern.PATTERN000 :
+        return function(i, j) { return (i + j) % 2 == 0; };
+      case QRMaskPattern.PATTERN001 :
+        return function(i, j) { return i % 2 == 0; };
+      case QRMaskPattern.PATTERN010 :
+        return function(i, j) { return j % 3 == 0; };
+      case QRMaskPattern.PATTERN011 :
+        return function(i, j) { return (i + j) % 3 == 0; };
+      case QRMaskPattern.PATTERN100 :
+        return function(i, j) { return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 == 0; };
+      case QRMaskPattern.PATTERN101 :
+        return function(i, j) { return (i * j) % 2 + (i * j) % 3 == 0; };
+      case QRMaskPattern.PATTERN110 :
+        return function(i, j) { return ( (i * j) % 2 + (i * j) % 3) % 2 == 0; };
+      case QRMaskPattern.PATTERN111 :
+        return function(i, j) { return ( (i * j) % 3 + (i + j) % 2) % 2 == 0; };
+
+      default :
+        throw 'bad maskPattern:' + maskPattern;
+      }
+    };
+
+    _this.getErrorCorrectPolynomial = function(errorCorrectLength) {
+      var a = qrPolynomial([1], 0);
+      for (var i = 0; i < errorCorrectLength; i += 1) {
+        a = a.multiply(qrPolynomial([1, QRMath.gexp(i)], 0) );
+      }
+      return a;
+    };
+
+    _this.getLengthInBits = function(mode, type) {
+
+      if (1 <= type && type < 10) {
+
+        // 1 - 9
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 10;
+        case QRMode.MODE_ALPHA_NUM : return 9;
+        case QRMode.MODE_8BIT_BYTE : return 8;
+        case QRMode.MODE_KANJI     : return 8;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else if (type < 27) {
+
+        // 10 - 26
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 12;
+        case QRMode.MODE_ALPHA_NUM : return 11;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 10;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else if (type < 41) {
+
+        // 27 - 40
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 14;
+        case QRMode.MODE_ALPHA_NUM : return 13;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 12;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else {
+        throw 'type:' + type;
+      }
+    };
+
+    _this.getLostPoint = function(qrcode) {
+
+      var moduleCount = qrcode.getModuleCount();
+
+      var lostPoint = 0;
+
+      // LEVEL1
+
+      for (var row = 0; row < moduleCount; row += 1) {
+        for (var col = 0; col < moduleCount; col += 1) {
+
+          var sameCount = 0;
+          var dark = qrcode.isDark(row, col);
+
+          for (var r = -1; r <= 1; r += 1) {
+
+            if (row + r < 0 || moduleCount <= row + r) {
+              continue;
+            }
+
+            for (var c = -1; c <= 1; c += 1) {
+
+              if (col + c < 0 || moduleCount <= col + c) {
+                continue;
+              }
+
+              if (r == 0 && c == 0) {
+                continue;
+              }
+
+              if (dark == qrcode.isDark(row + r, col + c) ) {
+                sameCount += 1;
+              }
+            }
+          }
+
+          if (sameCount > 5) {
+            lostPoint += (3 + sameCount - 5);
+          }
+        }
+      };
+
+      // LEVEL2
+
+      for (var row = 0; row < moduleCount - 1; row += 1) {
+        for (var col = 0; col < moduleCount - 1; col += 1) {
+          var count = 0;
+          if (qrcode.isDark(row, col) ) count += 1;
+          if (qrcode.isDark(row + 1, col) ) count += 1;
+          if (qrcode.isDark(row, col + 1) ) count += 1;
+          if (qrcode.isDark(row + 1, col + 1) ) count += 1;
+          if (count == 0 || count == 4) {
+            lostPoint += 3;
+          }
+        }
+      }
+
+      // LEVEL3
+
+      for (var row = 0; row < moduleCount; row += 1) {
+        for (var col = 0; col < moduleCount - 6; col += 1) {
+          if (qrcode.isDark(row, col)
+              && !qrcode.isDark(row, col + 1)
+              &&  qrcode.isDark(row, col + 2)
+              &&  qrcode.isDark(row, col + 3)
+              &&  qrcode.isDark(row, col + 4)
+              && !qrcode.isDark(row, col + 5)
+              &&  qrcode.isDark(row, col + 6) ) {
+            lostPoint += 40;
+          }
+        }
+      }
+
+      for (var col = 0; col < moduleCount; col += 1) {
+        for (var row = 0; row < moduleCount - 6; row += 1) {
+          if (qrcode.isDark(row, col)
+              && !qrcode.isDark(row + 1, col)
+              &&  qrcode.isDark(row + 2, col)
+              &&  qrcode.isDark(row + 3, col)
+              &&  qrcode.isDark(row + 4, col)
+              && !qrcode.isDark(row + 5, col)
+              &&  qrcode.isDark(row + 6, col) ) {
+            lostPoint += 40;
+          }
+        }
+      }
+
+      // LEVEL4
+
+      var darkCount = 0;
+
+      for (var col = 0; col < moduleCount; col += 1) {
+        for (var row = 0; row < moduleCount; row += 1) {
+          if (qrcode.isDark(row, col) ) {
+            darkCount += 1;
+          }
+        }
+      }
+
+      var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+      lostPoint += ratio * 10;
+
+      return lostPoint;
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // QRMath
+  //---------------------------------------------------------------------
+
+  var QRMath = function() {
+
+    var EXP_TABLE = new Array(256);
+    var LOG_TABLE = new Array(256);
+
+    // initialize tables
+    for (var i = 0; i < 8; i += 1) {
+      EXP_TABLE[i] = 1 << i;
+    }
+    for (var i = 8; i < 256; i += 1) {
+      EXP_TABLE[i] = EXP_TABLE[i - 4]
+        ^ EXP_TABLE[i - 5]
+        ^ EXP_TABLE[i - 6]
+        ^ EXP_TABLE[i - 8];
+    }
+    for (var i = 0; i < 255; i += 1) {
+      LOG_TABLE[EXP_TABLE[i] ] = i;
+    }
+
+    var _this = {};
+
+    _this.glog = function(n) {
+
+      if (n < 1) {
+        throw 'glog(' + n + ')';
+      }
+
+      return LOG_TABLE[n];
+    };
+
+    _this.gexp = function(n) {
+
+      while (n < 0) {
+        n += 255;
+      }
+
+      while (n >= 256) {
+        n -= 255;
+      }
+
+      return EXP_TABLE[n];
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // qrPolynomial
+  //---------------------------------------------------------------------
+
+  function qrPolynomial(num, shift) {
+
+    if (typeof num.length == 'undefined') {
+      throw num.length + '/' + shift;
+    }
+
+    var _num = function() {
+      var offset = 0;
+      while (offset < num.length && num[offset] == 0) {
+        offset += 1;
+      }
+      var _num = new Array(num.length - offset + shift);
+      for (var i = 0; i < num.length - offset; i += 1) {
+        _num[i] = num[i + offset];
+      }
+      return _num;
+    }();
+
+    var _this = {};
+
+    _this.getAt = function(index) {
+      return _num[index];
+    };
+
+    _this.getLength = function() {
+      return _num.length;
+    };
+
+    _this.multiply = function(e) {
+
+      var num = new Array(_this.getLength() + e.getLength() - 1);
+
+      for (var i = 0; i < _this.getLength(); i += 1) {
+        for (var j = 0; j < e.getLength(); j += 1) {
+          num[i + j] ^= QRMath.gexp(QRMath.glog(_this.getAt(i) ) + QRMath.glog(e.getAt(j) ) );
+        }
+      }
+
+      return qrPolynomial(num, 0);
+    };
+
+    _this.mod = function(e) {
+
+      if (_this.getLength() - e.getLength() < 0) {
+        return _this;
+      }
+
+      var ratio = QRMath.glog(_this.getAt(0) ) - QRMath.glog(e.getAt(0) );
+
+      var num = new Array(_this.getLength() );
+      for (var i = 0; i < _this.getLength(); i += 1) {
+        num[i] = _this.getAt(i);
+      }
+
+      for (var i = 0; i < e.getLength(); i += 1) {
+        num[i] ^= QRMath.gexp(QRMath.glog(e.getAt(i) ) + ratio);
+      }
+
+      // recursive call
+      return qrPolynomial(num, 0).mod(e);
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // QRRSBlock
+  //---------------------------------------------------------------------
+
+  var QRRSBlock = function() {
+
+    var RS_BLOCK_TABLE = [
+
+      // L
+      // M
+      // Q
+      // H
+
+      // 1
+      [1, 26, 19],
+      [1, 26, 16],
+      [1, 26, 13],
+      [1, 26, 9],
+
+      // 2
+      [1, 44, 34],
+      [1, 44, 28],
+      [1, 44, 22],
+      [1, 44, 16],
+
+      // 3
+      [1, 70, 55],
+      [1, 70, 44],
+      [2, 35, 17],
+      [2, 35, 13],
+
+      // 4
+      [1, 100, 80],
+      [2, 50, 32],
+      [2, 50, 24],
+      [4, 25, 9],
+
+      // 5
+      [1, 134, 108],
+      [2, 67, 43],
+      [2, 33, 15, 2, 34, 16],
+      [2, 33, 11, 2, 34, 12],
+
+      // 6
+      [2, 86, 68],
+      [4, 43, 27],
+      [4, 43, 19],
+      [4, 43, 15],
+
+      // 7
+      [2, 98, 78],
+      [4, 49, 31],
+      [2, 32, 14, 4, 33, 15],
+      [4, 39, 13, 1, 40, 14],
+
+      // 8
+      [2, 121, 97],
+      [2, 60, 38, 2, 61, 39],
+      [4, 40, 18, 2, 41, 19],
+      [4, 40, 14, 2, 41, 15],
+
+      // 9
+      [2, 146, 116],
+      [3, 58, 36, 2, 59, 37],
+      [4, 36, 16, 4, 37, 17],
+      [4, 36, 12, 4, 37, 13],
+
+      // 10
+      [2, 86, 68, 2, 87, 69],
+      [4, 69, 43, 1, 70, 44],
+      [6, 43, 19, 2, 44, 20],
+      [6, 43, 15, 2, 44, 16],
+
+      // 11
+      [4, 101, 81],
+      [1, 80, 50, 4, 81, 51],
+      [4, 50, 22, 4, 51, 23],
+      [3, 36, 12, 8, 37, 13],
+
+      // 12
+      [2, 116, 92, 2, 117, 93],
+      [6, 58, 36, 2, 59, 37],
+      [4, 46, 20, 6, 47, 21],
+      [7, 42, 14, 4, 43, 15],
+
+      // 13
+      [4, 133, 107],
+      [8, 59, 37, 1, 60, 38],
+      [8, 44, 20, 4, 45, 21],
+      [12, 33, 11, 4, 34, 12],
+
+      // 14
+      [3, 145, 115, 1, 146, 116],
+      [4, 64, 40, 5, 65, 41],
+      [11, 36, 16, 5, 37, 17],
+      [11, 36, 12, 5, 37, 13],
+
+      // 15
+      [5, 109, 87, 1, 110, 88],
+      [5, 65, 41, 5, 66, 42],
+      [5, 54, 24, 7, 55, 25],
+      [11, 36, 12, 7, 37, 13],
+
+      // 16
+      [5, 122, 98, 1, 123, 99],
+      [7, 73, 45, 3, 74, 46],
+      [15, 43, 19, 2, 44, 20],
+      [3, 45, 15, 13, 46, 16],
+
+      // 17
+      [1, 135, 107, 5, 136, 108],
+      [10, 74, 46, 1, 75, 47],
+      [1, 50, 22, 15, 51, 23],
+      [2, 42, 14, 17, 43, 15],
+
+      // 18
+      [5, 150, 120, 1, 151, 121],
+      [9, 69, 43, 4, 70, 44],
+      [17, 50, 22, 1, 51, 23],
+      [2, 42, 14, 19, 43, 15],
+
+      // 19
+      [3, 141, 113, 4, 142, 114],
+      [3, 70, 44, 11, 71, 45],
+      [17, 47, 21, 4, 48, 22],
+      [9, 39, 13, 16, 40, 14],
+
+      // 20
+      [3, 135, 107, 5, 136, 108],
+      [3, 67, 41, 13, 68, 42],
+      [15, 54, 24, 5, 55, 25],
+      [15, 43, 15, 10, 44, 16],
+
+      // 21
+      [4, 144, 116, 4, 145, 117],
+      [17, 68, 42],
+      [17, 50, 22, 6, 51, 23],
+      [19, 46, 16, 6, 47, 17],
+
+      // 22
+      [2, 139, 111, 7, 140, 112],
+      [17, 74, 46],
+      [7, 54, 24, 16, 55, 25],
+      [34, 37, 13],
+
+      // 23
+      [4, 151, 121, 5, 152, 122],
+      [4, 75, 47, 14, 76, 48],
+      [11, 54, 24, 14, 55, 25],
+      [16, 45, 15, 14, 46, 16],
+
+      // 24
+      [6, 147, 117, 4, 148, 118],
+      [6, 73, 45, 14, 74, 46],
+      [11, 54, 24, 16, 55, 25],
+      [30, 46, 16, 2, 47, 17],
+
+      // 25
+      [8, 132, 106, 4, 133, 107],
+      [8, 75, 47, 13, 76, 48],
+      [7, 54, 24, 22, 55, 25],
+      [22, 45, 15, 13, 46, 16],
+
+      // 26
+      [10, 142, 114, 2, 143, 115],
+      [19, 74, 46, 4, 75, 47],
+      [28, 50, 22, 6, 51, 23],
+      [33, 46, 16, 4, 47, 17],
+
+      // 27
+      [8, 152, 122, 4, 153, 123],
+      [22, 73, 45, 3, 74, 46],
+      [8, 53, 23, 26, 54, 24],
+      [12, 45, 15, 28, 46, 16],
+
+      // 28
+      [3, 147, 117, 10, 148, 118],
+      [3, 73, 45, 23, 74, 46],
+      [4, 54, 24, 31, 55, 25],
+      [11, 45, 15, 31, 46, 16],
+
+      // 29
+      [7, 146, 116, 7, 147, 117],
+      [21, 73, 45, 7, 74, 46],
+      [1, 53, 23, 37, 54, 24],
+      [19, 45, 15, 26, 46, 16],
+
+      // 30
+      [5, 145, 115, 10, 146, 116],
+      [19, 75, 47, 10, 76, 48],
+      [15, 54, 24, 25, 55, 25],
+      [23, 45, 15, 25, 46, 16],
+
+      // 31
+      [13, 145, 115, 3, 146, 116],
+      [2, 74, 46, 29, 75, 47],
+      [42, 54, 24, 1, 55, 25],
+      [23, 45, 15, 28, 46, 16],
+
+      // 32
+      [17, 145, 115],
+      [10, 74, 46, 23, 75, 47],
+      [10, 54, 24, 35, 55, 25],
+      [19, 45, 15, 35, 46, 16],
+
+      // 33
+      [17, 145, 115, 1, 146, 116],
+      [14, 74, 46, 21, 75, 47],
+      [29, 54, 24, 19, 55, 25],
+      [11, 45, 15, 46, 46, 16],
+
+      // 34
+      [13, 145, 115, 6, 146, 116],
+      [14, 74, 46, 23, 75, 47],
+      [44, 54, 24, 7, 55, 25],
+      [59, 46, 16, 1, 47, 17],
+
+      // 35
+      [12, 151, 121, 7, 152, 122],
+      [12, 75, 47, 26, 76, 48],
+      [39, 54, 24, 14, 55, 25],
+      [22, 45, 15, 41, 46, 16],
+
+      // 36
+      [6, 151, 121, 14, 152, 122],
+      [6, 75, 47, 34, 76, 48],
+      [46, 54, 24, 10, 55, 25],
+      [2, 45, 15, 64, 46, 16],
+
+      // 37
+      [17, 152, 122, 4, 153, 123],
+      [29, 74, 46, 14, 75, 47],
+      [49, 54, 24, 10, 55, 25],
+      [24, 45, 15, 46, 46, 16],
+
+      // 38
+      [4, 152, 122, 18, 153, 123],
+      [13, 74, 46, 32, 75, 47],
+      [48, 54, 24, 14, 55, 25],
+      [42, 45, 15, 32, 46, 16],
+
+      // 39
+      [20, 147, 117, 4, 148, 118],
+      [40, 75, 47, 7, 76, 48],
+      [43, 54, 24, 22, 55, 25],
+      [10, 45, 15, 67, 46, 16],
+
+      // 40
+      [19, 148, 118, 6, 149, 119],
+      [18, 75, 47, 31, 76, 48],
+      [34, 54, 24, 34, 55, 25],
+      [20, 45, 15, 61, 46, 16]
+    ];
+
+    var qrRSBlock = function(totalCount, dataCount) {
+      var _this = {};
+      _this.totalCount = totalCount;
+      _this.dataCount = dataCount;
+      return _this;
+    };
+
+    var _this = {};
+
+    var getRsBlockTable = function(typeNumber, errorCorrectionLevel) {
+
+      switch(errorCorrectionLevel) {
+      case QRErrorCorrectionLevel.L :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+      case QRErrorCorrectionLevel.M :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+      case QRErrorCorrectionLevel.Q :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+      case QRErrorCorrectionLevel.H :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+      default :
+        return undefined;
+      }
+    };
+
+    _this.getRSBlocks = function(typeNumber, errorCorrectionLevel) {
+
+      var rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
+
+      if (typeof rsBlock == 'undefined') {
+        throw 'bad rs block @ typeNumber:' + typeNumber +
+            '/errorCorrectionLevel:' + errorCorrectionLevel;
+      }
+
+      var length = rsBlock.length / 3;
+
+      var list = [];
+
+      for (var i = 0; i < length; i += 1) {
+
+        var count = rsBlock[i * 3 + 0];
+        var totalCount = rsBlock[i * 3 + 1];
+        var dataCount = rsBlock[i * 3 + 2];
+
+        for (var j = 0; j < count; j += 1) {
+          list.push(qrRSBlock(totalCount, dataCount) );
+        }
+      }
+
+      return list;
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // qrBitBuffer
+  //---------------------------------------------------------------------
+
+  var qrBitBuffer = function() {
+
+    var _buffer = [];
+    var _length = 0;
+
+    var _this = {};
+
+    _this.getBuffer = function() {
+      return _buffer;
+    };
+
+    _this.getAt = function(index) {
+      var bufIndex = Math.floor(index / 8);
+      return ( (_buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+    };
+
+    _this.put = function(num, length) {
+      for (var i = 0; i < length; i += 1) {
+        _this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+      }
+    };
+
+    _this.getLengthInBits = function() {
+      return _length;
+    };
+
+    _this.putBit = function(bit) {
+
+      var bufIndex = Math.floor(_length / 8);
+      if (_buffer.length <= bufIndex) {
+        _buffer.push(0);
+      }
+
+      if (bit) {
+        _buffer[bufIndex] |= (0x80 >>> (_length % 8) );
+      }
+
+      _length += 1;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrNumber
+  //---------------------------------------------------------------------
+
+  var qrNumber = function(data) {
+
+    var _mode = QRMode.MODE_NUMBER;
+    var _data = data;
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _data.length;
+    };
+
+    _this.write = function(buffer) {
+
+      var data = _data;
+
+      var i = 0;
+
+      while (i + 2 < data.length) {
+        buffer.put(strToNum(data.substring(i, i + 3) ), 10);
+        i += 3;
+      }
+
+      if (i < data.length) {
+        if (data.length - i == 1) {
+          buffer.put(strToNum(data.substring(i, i + 1) ), 4);
+        } else if (data.length - i == 2) {
+          buffer.put(strToNum(data.substring(i, i + 2) ), 7);
+        }
+      }
+    };
+
+    var strToNum = function(s) {
+      var num = 0;
+      for (var i = 0; i < s.length; i += 1) {
+        num = num * 10 + chatToNum(s.charAt(i) );
+      }
+      return num;
+    };
+
+    var chatToNum = function(c) {
+      if ('0' <= c && c <= '9') {
+        return c.charCodeAt(0) - '0'.charCodeAt(0);
+      }
+      throw 'illegal char :' + c;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrAlphaNum
+  //---------------------------------------------------------------------
+
+  var qrAlphaNum = function(data) {
+
+    var _mode = QRMode.MODE_ALPHA_NUM;
+    var _data = data;
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _data.length;
+    };
+
+    _this.write = function(buffer) {
+
+      var s = _data;
+
+      var i = 0;
+
+      while (i + 1 < s.length) {
+        buffer.put(
+          getCode(s.charAt(i) ) * 45 +
+          getCode(s.charAt(i + 1) ), 11);
+        i += 2;
+      }
+
+      if (i < s.length) {
+        buffer.put(getCode(s.charAt(i) ), 6);
+      }
+    };
+
+    var getCode = function(c) {
+
+      if ('0' <= c && c <= '9') {
+        return c.charCodeAt(0) - '0'.charCodeAt(0);
+      } else if ('A' <= c && c <= 'Z') {
+        return c.charCodeAt(0) - 'A'.charCodeAt(0) + 10;
+      } else {
+        switch (c) {
+        case ' ' : return 36;
+        case '$' : return 37;
+        case '%' : return 38;
+        case '*' : return 39;
+        case '+' : return 40;
+        case '-' : return 41;
+        case '.' : return 42;
+        case '/' : return 43;
+        case ':' : return 44;
+        default :
+          throw 'illegal char :' + c;
+        }
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qr8BitByte
+  //---------------------------------------------------------------------
+
+  var qr8BitByte = function(data) {
+
+    var _mode = QRMode.MODE_8BIT_BYTE;
+    var _data = data;
+    var _bytes = qrcode.stringToBytes(data);
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _bytes.length;
+    };
+
+    _this.write = function(buffer) {
+      for (var i = 0; i < _bytes.length; i += 1) {
+        buffer.put(_bytes[i], 8);
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrKanji
+  //---------------------------------------------------------------------
+
+  var qrKanji = function(data) {
+
+    var _mode = QRMode.MODE_KANJI;
+    var _data = data;
+
+    var stringToBytes = qrcode.stringToBytesFuncs['SJIS'];
+    if (!stringToBytes) {
+      throw 'sjis not supported.';
+    }
+    !function(c, code) {
+      // self test for sjis support.
+      var test = stringToBytes(c);
+      if (test.length != 2 || ( (test[0] << 8) | test[1]) != code) {
+        throw 'sjis not supported.';
+      }
+    }('\u53cb', 0x9746);
+
+    var _bytes = stringToBytes(data);
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return ~~(_bytes.length / 2);
+    };
+
+    _this.write = function(buffer) {
+
+      var data = _bytes;
+
+      var i = 0;
+
+      while (i + 1 < data.length) {
+
+        var c = ( (0xff & data[i]) << 8) | (0xff & data[i + 1]);
+
+        if (0x8140 <= c && c <= 0x9FFC) {
+          c -= 0x8140;
+        } else if (0xE040 <= c && c <= 0xEBBF) {
+          c -= 0xC140;
+        } else {
+          throw 'illegal char at ' + (i + 1) + '/' + c;
+        }
+
+        c = ( (c >>> 8) & 0xff) * 0xC0 + (c & 0xff);
+
+        buffer.put(c, 13);
+
+        i += 2;
+      }
+
+      if (i < data.length) {
+        throw 'illegal char at ' + (i + 1);
+      }
+    };
+
+    return _this;
+  };
+
+  //=====================================================================
+  // GIF Support etc.
+  //
+
+  //---------------------------------------------------------------------
+  // byteArrayOutputStream
+  //---------------------------------------------------------------------
+
+  var byteArrayOutputStream = function() {
+
+    var _bytes = [];
+
+    var _this = {};
+
+    _this.writeByte = function(b) {
+      _bytes.push(b & 0xff);
+    };
+
+    _this.writeShort = function(i) {
+      _this.writeByte(i);
+      _this.writeByte(i >>> 8);
+    };
+
+    _this.writeBytes = function(b, off, len) {
+      off = off || 0;
+      len = len || b.length;
+      for (var i = 0; i < len; i += 1) {
+        _this.writeByte(b[i + off]);
+      }
+    };
+
+    _this.writeString = function(s) {
+      for (var i = 0; i < s.length; i += 1) {
+        _this.writeByte(s.charCodeAt(i) );
+      }
+    };
+
+    _this.toByteArray = function() {
+      return _bytes;
+    };
+
+    _this.toString = function() {
+      var s = '';
+      s += '[';
+      for (var i = 0; i < _bytes.length; i += 1) {
+        if (i > 0) {
+          s += ',';
+        }
+        s += _bytes[i];
+      }
+      s += ']';
+      return s;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // base64EncodeOutputStream
+  //---------------------------------------------------------------------
+
+  var base64EncodeOutputStream = function() {
+
+    var _buffer = 0;
+    var _buflen = 0;
+    var _length = 0;
+    var _base64 = '';
+
+    var _this = {};
+
+    var writeEncoded = function(b) {
+      _base64 += String.fromCharCode(encode(b & 0x3f) );
+    };
+
+    var encode = function(n) {
+      if (n < 0) {
+        // error.
+      } else if (n < 26) {
+        return 0x41 + n;
+      } else if (n < 52) {
+        return 0x61 + (n - 26);
+      } else if (n < 62) {
+        return 0x30 + (n - 52);
+      } else if (n == 62) {
+        return 0x2b;
+      } else if (n == 63) {
+        return 0x2f;
+      }
+      throw 'n:' + n;
+    };
+
+    _this.writeByte = function(n) {
+
+      _buffer = (_buffer << 8) | (n & 0xff);
+      _buflen += 8;
+      _length += 1;
+
+      while (_buflen >= 6) {
+        writeEncoded(_buffer >>> (_buflen - 6) );
+        _buflen -= 6;
+      }
+    };
+
+    _this.flush = function() {
+
+      if (_buflen > 0) {
+        writeEncoded(_buffer << (6 - _buflen) );
+        _buffer = 0;
+        _buflen = 0;
+      }
+
+      if (_length % 3 != 0) {
+        // padding
+        var padlen = 3 - _length % 3;
+        for (var i = 0; i < padlen; i += 1) {
+          _base64 += '=';
+        }
+      }
+    };
+
+    _this.toString = function() {
+      return _base64;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // base64DecodeInputStream
+  //---------------------------------------------------------------------
+
+  var base64DecodeInputStream = function(str) {
+
+    var _str = str;
+    var _pos = 0;
+    var _buffer = 0;
+    var _buflen = 0;
+
+    var _this = {};
+
+    _this.read = function() {
+
+      while (_buflen < 8) {
+
+        if (_pos >= _str.length) {
+          if (_buflen == 0) {
+            return -1;
+          }
+          throw 'unexpected end of file./' + _buflen;
+        }
+
+        var c = _str.charAt(_pos);
+        _pos += 1;
+
+        if (c == '=') {
+          _buflen = 0;
+          return -1;
+        } else if (c.match(/^\s$/) ) {
+          // ignore if whitespace.
+          continue;
+        }
+
+        _buffer = (_buffer << 6) | decode(c.charCodeAt(0) );
+        _buflen += 6;
+      }
+
+      var n = (_buffer >>> (_buflen - 8) ) & 0xff;
+      _buflen -= 8;
+      return n;
+    };
+
+    var decode = function(c) {
+      if (0x41 <= c && c <= 0x5a) {
+        return c - 0x41;
+      } else if (0x61 <= c && c <= 0x7a) {
+        return c - 0x61 + 26;
+      } else if (0x30 <= c && c <= 0x39) {
+        return c - 0x30 + 52;
+      } else if (c == 0x2b) {
+        return 62;
+      } else if (c == 0x2f) {
+        return 63;
+      } else {
+        throw 'c:' + c;
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // gifImage (B/W)
+  //---------------------------------------------------------------------
+
+  var gifImage = function(width, height) {
+
+    var _width = width;
+    var _height = height;
+    var _data = new Array(width * height);
+
+    var _this = {};
+
+    _this.setPixel = function(x, y, pixel) {
+      _data[y * _width + x] = pixel;
+    };
+
+    _this.write = function(out) {
+
+      //---------------------------------
+      // GIF Signature
+
+      out.writeString('GIF87a');
+
+      //---------------------------------
+      // Screen Descriptor
+
+      out.writeShort(_width);
+      out.writeShort(_height);
+
+      out.writeByte(0x80); // 2bit
+      out.writeByte(0);
+      out.writeByte(0);
+
+      //---------------------------------
+      // Global Color Map
+
+      // black
+      out.writeByte(0x00);
+      out.writeByte(0x00);
+      out.writeByte(0x00);
+
+      // white
+      out.writeByte(0xff);
+      out.writeByte(0xff);
+      out.writeByte(0xff);
+
+      //---------------------------------
+      // Image Descriptor
+
+      out.writeString(',');
+      out.writeShort(0);
+      out.writeShort(0);
+      out.writeShort(_width);
+      out.writeShort(_height);
+      out.writeByte(0);
+
+      //---------------------------------
+      // Local Color Map
+
+      //---------------------------------
+      // Raster Data
+
+      var lzwMinCodeSize = 2;
+      var raster = getLZWRaster(lzwMinCodeSize);
+
+      out.writeByte(lzwMinCodeSize);
+
+      var offset = 0;
+
+      while (raster.length - offset > 255) {
+        out.writeByte(255);
+        out.writeBytes(raster, offset, 255);
+        offset += 255;
+      }
+
+      out.writeByte(raster.length - offset);
+      out.writeBytes(raster, offset, raster.length - offset);
+      out.writeByte(0x00);
+
+      //---------------------------------
+      // GIF Terminator
+      out.writeString(';');
+    };
+
+    var bitOutputStream = function(out) {
+
+      var _out = out;
+      var _bitLength = 0;
+      var _bitBuffer = 0;
+
+      var _this = {};
+
+      _this.write = function(data, length) {
+
+        if ( (data >>> length) != 0) {
+          throw 'length over';
+        }
+
+        while (_bitLength + length >= 8) {
+          _out.writeByte(0xff & ( (data << _bitLength) | _bitBuffer) );
+          length -= (8 - _bitLength);
+          data >>>= (8 - _bitLength);
+          _bitBuffer = 0;
+          _bitLength = 0;
+        }
+
+        _bitBuffer = (data << _bitLength) | _bitBuffer;
+        _bitLength = _bitLength + length;
+      };
+
+      _this.flush = function() {
+        if (_bitLength > 0) {
+          _out.writeByte(_bitBuffer);
+        }
+      };
+
+      return _this;
+    };
+
+    var getLZWRaster = function(lzwMinCodeSize) {
+
+      var clearCode = 1 << lzwMinCodeSize;
+      var endCode = (1 << lzwMinCodeSize) + 1;
+      var bitLength = lzwMinCodeSize + 1;
+
+      // Setup LZWTable
+      var table = lzwTable();
+
+      for (var i = 0; i < clearCode; i += 1) {
+        table.add(String.fromCharCode(i) );
+      }
+      table.add(String.fromCharCode(clearCode) );
+      table.add(String.fromCharCode(endCode) );
+
+      var byteOut = byteArrayOutputStream();
+      var bitOut = bitOutputStream(byteOut);
+
+      // clear code
+      bitOut.write(clearCode, bitLength);
+
+      var dataIndex = 0;
+
+      var s = String.fromCharCode(_data[dataIndex]);
+      dataIndex += 1;
+
+      while (dataIndex < _data.length) {
+
+        var c = String.fromCharCode(_data[dataIndex]);
+        dataIndex += 1;
+
+        if (table.contains(s + c) ) {
+
+          s = s + c;
+
+        } else {
+
+          bitOut.write(table.indexOf(s), bitLength);
+
+          if (table.size() < 0xfff) {
+
+            if (table.size() == (1 << bitLength) ) {
+              bitLength += 1;
+            }
+
+            table.add(s + c);
+          }
+
+          s = c;
+        }
+      }
+
+      bitOut.write(table.indexOf(s), bitLength);
+
+      // end code
+      bitOut.write(endCode, bitLength);
+
+      bitOut.flush();
+
+      return byteOut.toByteArray();
+    };
+
+    var lzwTable = function() {
+
+      var _map = {};
+      var _size = 0;
+
+      var _this = {};
+
+      _this.add = function(key) {
+        if (_this.contains(key) ) {
+          throw 'dup key:' + key;
+        }
+        _map[key] = _size;
+        _size += 1;
+      };
+
+      _this.size = function() {
+        return _size;
+      };
+
+      _this.indexOf = function(key) {
+        return _map[key];
+      };
+
+      _this.contains = function(key) {
+        return typeof _map[key] != 'undefined';
+      };
+
+      return _this;
+    };
+
+    return _this;
+  };
+
+  var createDataURL = function(width, height, getPixel) {
+    var gif = gifImage(width, height);
+    for (var y = 0; y < height; y += 1) {
+      for (var x = 0; x < width; x += 1) {
+        gif.setPixel(x, y, getPixel(x, y) );
+      }
+    }
+
+    var b = byteArrayOutputStream();
+    gif.write(b);
+
+    var base64 = base64EncodeOutputStream();
+    var bytes = b.toByteArray();
+    for (var i = 0; i < bytes.length; i += 1) {
+      base64.writeByte(bytes[i]);
+    }
+    base64.flush();
+
+    return 'data:image/gif;base64,' + base64;
+  };
+
+  //---------------------------------------------------------------------
+  // returns qrcode function.
+
+  return qrcode;
+}();
+
+// multibyte support
+!function() {
+
+  qrcode.stringToBytesFuncs['UTF-8'] = function(s) {
+    // http://stackoverflow.com/questions/18729405/how-to-convert-utf8-string-to-byte-array
+    function toUTF8Array(str) {
+      var utf8 = [];
+      for (var i=0; i < str.length; i++) {
+        var charcode = str.charCodeAt(i);
+        if (charcode < 0x80) utf8.push(charcode);
+        else if (charcode < 0x800) {
+          utf8.push(0xc0 | (charcode >> 6),
+              0x80 | (charcode & 0x3f));
+        }
+        else if (charcode < 0xd800 || charcode >= 0xe000) {
+          utf8.push(0xe0 | (charcode >> 12),
+              0x80 | ((charcode>>6) & 0x3f),
+              0x80 | (charcode & 0x3f));
+        }
+        // surrogate pair
+        else {
+          i++;
+          // UTF-16 encodes 0x10000-0x10FFFF by
+          // subtracting 0x10000 and splitting the
+          // 20 bits of 0x0-0xFFFFF into two halves
+          charcode = 0x10000 + (((charcode & 0x3ff)<<10)
+            | (str.charCodeAt(i) & 0x3ff));
+          utf8.push(0xf0 | (charcode >>18),
+              0x80 | ((charcode>>12) & 0x3f),
+              0x80 | ((charcode>>6) & 0x3f),
+              0x80 | (charcode & 0x3f));
+        }
+      }
+      return utf8;
+    }
+    return toUTF8Array(s);
+  };
+
+}();
+
+(function (factory) {
+  if (typeof define === 'function' && define.amd) {
+      define([], factory);
+  } else if (typeof exports === 'object') {
+      module.exports = factory();
+  }
+}(function () {
+    return qrcode;
+}));
+</script>
 <script>
 (() => {
   const PREFIX = 'polsim-kotaksuara-v1-';
@@ -138,13 +2448,36 @@
   const ALPH = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
   const $ = id => document.getElementById(id);
 
+  // ================= TURN RELAY (optional but recommended) =================
+  // Phones on mobile data often can't connect to each other directly.
+  // A TURN relay fixes that. Create a free account (e.g. metered.ca → TURN Server),
+  // then paste the servers it gives you below, for example:
+  //   { urls: 'turn:global.relay.metered.ca:80', username: 'xxxx', credential: 'yyyy' },
+  //   { urls: 'turn:global.relay.metered.ca:443?transport=tcp', username: 'xxxx', credential: 'yyyy' },
+  const CREDENTIALS = '5X80LFL56oCMaD72'
+  const MY_TURN_SERVERS = [
+    { urls: 'stun:stun.relay.metered.ca:80' },
+    { urls: 'turn:global.relay.metered.ca:80', username: '23bd99dba47f6dc8ec9bf53c', credential: CREDENTIALS },
+    { urls: 'turn:global.relay.metered.ca:80?transport=tcp', username: '23bd99dba47f6dc8ec9bf53c', credential: CREDENTIALS },
+    { urls: 'turn:global.relay.metered.ca:443', username: '23bd99dba47f6dc8ec9bf53c', credential: CREDENTIALS },
+    { urls: 'turns:global.relay.metered.ca:443?transport=tcp', username: '23bd99dba47f6dc8ec9bf53c', credential: CREDENTIALS },
+  ];
+  // =========================================================================
+  const ICE_SERVERS = [
+    { urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'] },
+    { urls: 'stun:stun.cloudflare.com:3478' },
+    ...MY_TURN_SERVERS,
+    { urls: ['turn:eu-0.turn.peerjs.com:3478', 'turn:us-0.turn.peerjs.com:3478'], username: 'peerjs', credential: 'peerjsp' },  // free shared fallback
+  ];
+
   // optional: ?ps=host:port to use your own PeerServer (testing / offline LAN)
   const params = new URLSearchParams(location.search);
   function peerOpts(){
+    const base = { debug: 0, config: { iceServers: ICE_SERVERS, sdpSemantics: 'unified-plan' } };
     const ps = params.get('ps');
-    if (!ps) return { debug: 0 };
+    if (!ps) return base;
     const [host, port] = ps.split(':');
-    return { host, port: Number(port || 9000), path: '/', secure: location.protocol === 'https:' && params.get('secure') !== '0', debug: 0 };
+    return { ...base, host, port: Number(port || 9000), path: '/', secure: location.protocol === 'https:' && params.get('secure') !== '0' };
   }
 
   let token;
@@ -194,49 +2527,118 @@
     c.on('error', () => {});
   }
 
-  function createRoom(attempt = 0){
-    teardown();
-    isHost = true; code = genCode();
-    $('btnCreate').disabled = true; toast('Membuat room…', 8000);
-    peer = new Peer(PREFIX + code, peerOpts());
-    peer.on('open', () => {
-      H.players.clear(); H.round = 1; H.revealed = false; H.adj = Array(OPTIONS).fill(0);
-      H.players.set(token, { vote: null, online: true, conn: null });
-      enterRoom(); broadcast(); toast('Room siap. Bagikan kodenya!');
-    });
-    peer.on('connection', c => { c.on('open', () => hostHandle(c)); });
-    peer.on('error', err => {
-      if (err.type === 'unavailable-id' && attempt < 5) return createRoom(attempt + 1);
-      if (err.type === 'peer-unavailable') return;
-      fail('Gagal membuat room (' + (err.type || 'error') + '). Cek koneksi internet.');
-    });
-    peer.on('disconnected', () => { try { peer.reconnect(); } catch(e) {} });
+  // ---------- connection status, screen wake lock, reconnect helpers ----------
+  function setNet(state){
+    const chip = $('netChip'); chip.classList.remove('hidden');
+    chip.textContent = state === 'online' ? '● Online' : '● Menyambung…';
+    chip.style.color = state === 'online' ? 'var(--ok)' : '#B36B00';
+  }
+  let wakeLock = null;
+  async function keepAwake(){
+    try { if ('wakeLock' in navigator && !wakeLock && document.visibilityState === 'visible') {
+      wakeLock = await navigator.wakeLock.request('screen');
+      wakeLock.addEventListener('release', () => { wakeLock = null; });
+    } } catch(e) {}
+  }
+  let reconnectTimer = null;
+  function reconnectSignal(delay = 1000){
+    clearTimeout(reconnectTimer);
+    reconnectTimer = setTimeout(() => {
+      if (peer && !peer.destroyed && peer.disconnected) { try { peer.reconnect(); } catch(e) {} reconnectSignal(Math.min(delay * 2, 8000)); }
+    }, delay);
   }
 
+  // ---------- creating a room (host) ----------
+  let hostReady = false;
+  function createRoom(attempt = 0){
+    teardown();
+    isHost = true; code = genCode(); hostReady = false;
+    $('btnCreate').disabled = true; toast('Membuat room…', 8000);
+    const p = new Peer(PREFIX + code, peerOpts()); peer = p;
+    p.on('open', () => {
+      if (p !== peer) return;
+      setNet('online');
+      if (hostReady) { toast('Tersambung kembali'); return; }   // re-registered after a drop: keep the room as is
+      hostReady = true;
+      H.players.clear(); H.round = 1; H.revealed = false; H.adj = Array(OPTIONS).fill(0);
+      H.players.set(token, { vote: null, online: true, conn: null });
+      enterRoom(); broadcast(); keepAwake(); toast('Room siap. Bagikan kodenya!');
+    });
+    p.on('connection', c => { c.on('open', () => hostHandle(c)); });
+    p.on('error', err => {
+      if (p !== peer) return;
+      if (!hostReady) {
+        if (err.type === 'unavailable-id' && attempt < 5) return createRoom(attempt + 1);
+        return fail('Gagal membuat room (' + (err.type || 'error') + '). Cek koneksi internet.');
+      }
+      // room already running: never close it because of a network hiccup
+      if (err.type !== 'peer-unavailable') { setNet('reconnecting'); reconnectSignal(); }
+    });
+    p.on('disconnected', () => { if (p !== peer) return; setNet('reconnecting'); reconnectSignal(); });
+  }
+
+  // ---------- joining a room (guest) ----------
+  const G = { seq: 0, n: 0, timer: null, joined: false, bye: false, pending: 0 };
+  const TRIES = 3;
   function joinRoom(){
     const c = $('codeIn').value.trim().toUpperCase();
     if (!/^[A-Z0-9]{4}$/.test(c)) return toast('Kode room harus 4 karakter');
     teardown();
     isHost = false; code = c;
-    $('btnJoin').disabled = true; toast('Menghubungkan…', 10000);
-    peer = new Peer(undefined, peerOpts());
-    let opened = false;
-    const timer = setTimeout(() => { if (!opened) fail('Room tidak ditemukan atau tidak bisa dihubungi.'); }, 15000);
-    peer.on('open', () => {
-      conn = peer.connect(PREFIX + code, { reliable: true });
-      conn.on('open', () => { opened = true; clearTimeout(timer); conn.send({ t: 'hello', token }); enterRoom(); toast('Terhubung ke room ' + code); });
-      conn.on('data', msg => {
-        if (!msg) return;
-        if (msg.t === 'state') applyState(msg);
-        else if (msg.t === 'full') { clearTimeout(timer); fail('Room penuh (maksimal 6 pemain).'); }
-      });
-      conn.on('close', () => { if (opened) fail('Room ditutup oleh pemiliknya.'); });
+    $('btnJoin').disabled = true; toast('Menghubungkan…', 12000);
+    connectToHost(1);
+  }
+  function guestPeer(){
+    const p = new Peer(undefined, peerOpts()); peer = p;
+    p.on('open', () => { if (p !== peer) return; if (G.pending) { const n = G.pending; G.pending = 0; connectToHost(n); } });
+    p.on('error', err => {
+      if (p !== peer) return;
+      if (err.type === 'peer-unavailable') return retryOrFail('notfound', G.seq);
+      if (!G.joined && !p.open) return;                 // signalling not reachable yet: the attempt timer will retry
+      reconnectSignal();                                 // joined already: the direct link may still be fine
     });
-    peer.on('error', err => {
-      clearTimeout(timer);
-      if (err.type === 'peer-unavailable') fail('Room ' + code + ' tidak ditemukan.');
-      else fail('Koneksi gagal (' + (err.type || 'error') + ').');
+    p.on('disconnected', () => { if (p === peer) reconnectSignal(); });
+  }
+  function connectToHost(n){
+    G.n = n; const seq = ++G.seq;
+    clearTimeout(G.timer); G.timer = setTimeout(() => retryOrFail('timeout', seq), 12000);
+    if (!peer || peer.destroyed) { G.pending = n; guestPeer(); return; }
+    if (!peer.open) { G.pending = n; if (peer.disconnected) { try { peer.reconnect(); } catch(e) {} } return; }
+    try { conn && conn.close(); } catch(e) {}
+    const c = peer.connect(PREFIX + code, { reliable: true }); conn = c;
+    c.on('open', () => {
+      if (c !== conn) return;
+      clearTimeout(G.timer); G.joined = true;
+      c.send({ t: 'hello', token });
+      const first = $('room').classList.contains('hidden');
+      if (first) enterRoom();
+      setNet('online'); keepAwake();
+      toast(first ? 'Terhubung ke room ' + code : 'Tersambung kembali');
     });
+    c.on('data', msg => {
+      if (c !== conn || !msg) return;
+      if (msg.t === 'state') applyState(msg);
+      else if (msg.t === 'full') { G.bye = true; fail('Room penuh (maksimal 6 pemain).'); }
+      else if (msg.t === 'bye') { G.bye = true; fail('Room ditutup oleh pemiliknya.'); }
+    });
+    c.on('close', () => {
+      if (c !== conn || G.bye) return;
+      if (G.joined) { G.joined = false; setNet('reconnecting'); toast('Koneksi terputus, menyambung ulang…', 4000); connectToHost(1); }
+    });
+    c.on('error', () => {});
+  }
+  function retryOrFail(reason, seq){
+    if (seq !== G.seq || G.joined || G.bye) return;
+    clearTimeout(G.timer);
+    if (G.n < (reason === 'notfound' ? 2 : TRIES)) {
+      const n = G.n + 1;
+      toast(`Belum terhubung, mencoba lagi (${n}/${TRIES})…`, 3000);
+      G.seq++; setTimeout(() => { if (!G.bye && peer !== null) connectToHost(n); }, 1500);
+      return;
+    }
+    fail(reason === 'notfound'
+      ? `Room ${code} tidak ditemukan. Pastikan HP pembuat room membuka halaman ini dan layarnya menyala.`
+      : 'Tidak bisa terhubung ke HP pembuat room. Coba sambungkan semua HP ke Wi-Fi atau hotspot yang sama.');
   }
 
   function vote(v){
@@ -246,6 +2648,7 @@
     if (changed) toast('Suara diganti ke nomor ' + v, 1500);
     if (isHost) { const rec = H.players.get(token); if (!H.revealed) { rec.vote = v; broadcast(); } }
     else if (conn && conn.open) conn.send({ t: 'vote', v });
+    else toast('Koneksi sedang menyambung ulang. Pilih lagi sebentar.', 3000);
   }
   function reveal(){
     if (!isHost) return;
@@ -269,8 +2672,26 @@
   }
 
   // ---------- rendering ----------
+  function roomLink(){
+    const p = new URLSearchParams(location.search); p.set('room', code);
+    return location.origin + location.pathname + '?' + p.toString();
+  }
+  function setQR(open){
+    $('qrPanel').classList.toggle('hidden', !open);
+    $('btnQR').textContent = open ? 'Sembunyikan QR' : 'Tampilkan QR';
+  }
+  function buildQR(){
+    try {
+      const q = qrcode(0, 'M'); q.addData(roomLink()); q.make();
+      $('qrSvg').innerHTML = q.createSvgTag(6, 2);
+      const svg = $('qrSvg').querySelector('svg');
+      if (svg) { svg.removeAttribute('width'); svg.removeAttribute('height'); }
+      $('qrCode').textContent = code;
+    } catch(e) { $('qrSvg').textContent = 'QR tidak tersedia'; }
+  }
   function enterRoom(){
     show('room'); $('roomCode').textContent = code;
+    buildQR(); setQR(isHost);
     $('hostChip').classList.toggle('hidden', !isHost);
     $('hostControls').classList.toggle('hidden', !isHost);
     $('waitHost').classList.toggle('hidden', isHost);
@@ -335,11 +2756,22 @@
     $('mine').textContent = view.myVote ? `Suaramu: nomor ${view.myVote}` : 'Kamu tidak memilih di Polemik ini';
   }
 
-  function teardown(){ try { conn && conn.close(); } catch(e) {} try { peer && peer.destroy(); } catch(e) {} peer = null; conn = null; view = { players: 1, voted: 0, round: 1, revealed: false, tally: null, myVote: null }; }
-  function fail(msg){ teardown(); show('home'); $('btnCreate').disabled = false; $('btnJoin').disabled = false; toast(msg, 4000); }
+  function teardown(){
+    clearTimeout(G.timer); clearTimeout(reconnectTimer);
+    G.seq++; G.joined = false; G.bye = false; G.pending = 0; hostReady = false;
+    const p = peer, c = conn; peer = null; conn = null;
+    try { c && c.close(); } catch(e) {} try { p && p.destroy(); } catch(e) {}
+    try { wakeLock && wakeLock.release(); } catch(e) {} wakeLock = null;
+    $('netChip').classList.add('hidden');
+    view = { players: 1, voted: 0, round: 1, revealed: false, tally: null, myVote: null };
+  }
+  function fail(msg){ teardown(); show('home'); $('btnCreate').disabled = false; $('btnJoin').disabled = false; toast(msg, 5000); }
   function leave(){
     if (isHost && onlineCount() > 1 && !confirm('Kamu pemilik room. Keluar akan menutup room untuk semua pemain. Lanjut?')) return;
-    teardown(); show('home');
+    if (isHost) {   // tell everyone the room is closed on purpose, so they don't try to reconnect
+      H.players.forEach(p => { if (p.conn && p.conn.open) { try { p.conn.send({ t: 'bye' }); } catch(e) {} } });
+      setTimeout(() => { teardown(); show('home'); }, 400);
+    } else { G.bye = true; teardown(); show('home'); }
   }
 
   $('btnCreate').onclick = () => createRoom();
@@ -350,7 +2782,21 @@
   $('btnReset').onclick = reset;
   $('btnLeave').onclick = leave;
   window.addEventListener('beforeunload', e => { if (isHost && onlineCount() > 1) { e.preventDefault(); e.returnValue = ''; } });
-  const pre = params.get('room'); if (pre) $('codeIn').value = pre.toUpperCase();
+  $('btnQR').onclick = () => setQR($('qrPanel').classList.contains('hidden'));
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState !== 'visible' || !peer || peer.destroyed) return;
+    keepAwake();
+    if (peer.disconnected) { setNet('reconnecting'); try { peer.reconnect(); } catch(e) {} reconnectSignal(); }
+    if (!isHost && !G.joined && !G.bye && !$('room').classList.contains('hidden')) connectToHost(1);
+  });
+  window.addEventListener('online', () => { if (peer && !peer.destroyed && peer.disconnected) reconnectSignal(200); });
+  const pre = params.get('room');
+  if (pre) {
+    $('codeIn').value = pre.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4);
+    $('btnJoin').classList.add('primary'); $('btnCreate').classList.remove('primary');
+    $('btnJoin').textContent = 'Gabung Room ' + $('codeIn').value;
+    setTimeout(() => $('btnJoin').scrollIntoView({ block: 'center', behavior: 'smooth' }), 100);
+  }
   renderGrid();
 })();
 </script>
