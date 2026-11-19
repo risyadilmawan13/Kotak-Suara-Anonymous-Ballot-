@@ -48,6 +48,11 @@
   .fill{height:100%;background:var(--navy-2);border-radius:999px;transition:width .5s ease}
   .bar.win .fill{background:var(--gold)}
   .bar.win{color:var(--navy)}
+  .bar.ctl{grid-template-columns:24px 1fr 52px 40px 40px;gap:8px}
+  .bar .tot{text-align:right;white-space:nowrap}
+  .bar .delta{font-size:11px;font-weight:700;color:var(--muted)}
+  .bar .delta.up{color:var(--ok)} .bar .delta.down{color:var(--warn)}
+  .adj{min-height:40px;height:40px;padding:0;border-radius:12px;font-size:20px;line-height:1}
   .hidden{display:none !important}
   .toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 16px;border-radius:12px;font-weight:600;font-size:14px;max-width:90vw;text-align:center;z-index:9}
   .note{font-size:12px;color:var(--muted);text-align:center;margin:0}
@@ -100,6 +105,7 @@
 
     <div class="panel stack hidden" id="resultPanel">
       <h2>Hasil Voting</h2>
+      <p class="note hidden" id="adjHint" style="text-align:left">Sesuaikan suara untuk efek kartu: bonus Domain, Wawan (+1), Ricko (−1), dan lainnya. Semua pemain melihat perubahannya.</p>
       <div class="bars" id="bars"></div>
       <p class="status big" id="winner"></p>
       <p class="note" id="mine"></p>
@@ -149,7 +155,7 @@
   let view = { players: 1, voted: 0, round: 1, revealed: false, tally: null, myVote: null };
 
   // ---------- host state (only lives on the creator's device) ----------
-  const H = { players: new Map(), round: 1, revealed: false };   // token -> {conn, vote, online}
+  const H = { players: new Map(), round: 1, revealed: false, adj: Array(OPTIONS).fill(0) };   // players: token -> {conn, vote, online}
 
   function toast(msg, ms = 2600){ const t = $('toast'); t.textContent = msg; t.classList.remove('hidden'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.add('hidden'), ms); }
   function show(id){ ['home','room'].forEach(s => $(s).classList.toggle('hidden', s !== id)); }
@@ -160,7 +166,7 @@
   function votedCount(){ let n = 0; H.players.forEach(p => { if (p.vote) n++; }); return n; }
   function snapshot(rec){
     return { t: 'state', players: onlineCount(), voted: votedCount(), round: H.round, revealed: H.revealed,
-             tally: H.revealed ? tally() : null, myVote: rec ? rec.vote : null };
+             tally: H.revealed ? tally() : null, adj: H.revealed ? H.adj.slice() : null, myVote: rec ? rec.vote : null };
   }
   function broadcast(){
     H.players.forEach((p, tok) => { if (p.conn && p.conn.open) { try { p.conn.send(snapshot(p)); } catch(e) {} } });
@@ -180,7 +186,7 @@
       } else if (msg.t === 'vote') {
         const rec = H.players.get(c._token);
         const v = Number(msg.v);
-        if (!rec || H.revealed || rec.vote || !(v >= 1 && v <= OPTIONS)) return;
+        if (!rec || H.revealed || !(v >= 1 && v <= OPTIONS)) return;   // changing a vote is allowed until reveal
         rec.vote = v; broadcast();
       }
     });
@@ -194,7 +200,7 @@
     $('btnCreate').disabled = true; toast('Membuat room…', 8000);
     peer = new Peer(PREFIX + code, peerOpts());
     peer.on('open', () => {
-      H.players.clear(); H.round = 1; H.revealed = false;
+      H.players.clear(); H.round = 1; H.revealed = false; H.adj = Array(OPTIONS).fill(0);
       H.players.set(token, { vote: null, online: true, conn: null });
       enterRoom(); broadcast(); toast('Room siap. Bagikan kodenya!');
     });
@@ -234,9 +240,11 @@
   }
 
   function vote(v){
-    if (view.myVote || view.revealed) return;
-    view.myVote = v; renderGrid();
-    if (isHost) { const rec = H.players.get(token); if (!H.revealed && !rec.vote) { rec.vote = v; broadcast(); } }
+    if (view.revealed || view.myVote === v) return;
+    const changed = !!view.myVote;
+    view.myVote = v; renderGrid(); renderWait();
+    if (changed) toast('Suara diganti ke nomor ' + v, 1500);
+    if (isHost) { const rec = H.players.get(token); if (!H.revealed) { rec.vote = v; broadcast(); } }
     else if (conn && conn.open) conn.send({ t: 'vote', v });
   }
   function reveal(){
@@ -248,9 +256,16 @@
   }
   function reset(){
     if (!isHost) return;
-    H.round += 1; H.revealed = false;
+    H.round += 1; H.revealed = false; H.adj = Array(OPTIONS).fill(0);
     H.players.forEach((p, tok) => { if (!p.online && tok !== token) H.players.delete(tok); else p.vote = null; });
     broadcast(); toast('Polemik #' + H.round + ' dimulai');
+  }
+
+  function adjust(i, d){
+    if (!isHost || !H.revealed) return;
+    const raw = tally()[i];
+    if (raw + H.adj[i] + d < 0) return toast('Suara tidak bisa kurang dari 0');
+    H.adj[i] += d; broadcast();
   }
 
   // ---------- rendering ----------
@@ -270,8 +285,7 @@
     $('counter').textContent = `Suara masuk: ${s.voted}/${s.players}`;
     $('btnReveal').disabled = s.revealed || s.voted === 0;
     $('waitHost').classList.toggle('hidden', isHost || s.revealed);
-    $('waitHost').textContent = view.myVote ? 'Suaramu terkunci. Menunggu pemilik room membuka hasil…' : 'Menunggu pemilik room membuka hasil…';
-    renderGrid(); renderResult();
+    renderWait(); renderGrid(); renderResult();
   }
   function renderGrid(){
     const g = $('grid'); g.innerHTML = '';
@@ -279,24 +293,42 @@
       const b = document.createElement('button');
       b.className = 'num' + (view.myVote === i ? ' sel' : '');
       b.textContent = i; b.setAttribute('aria-label', 'Pilih Kebijakan nomor ' + i);
-      b.disabled = !!view.myVote || view.revealed;
+      b.disabled = view.revealed;
       b.onclick = () => vote(i);
       g.appendChild(b);
     }
-    $('voteHint').textContent = view.revealed ? 'Voting ditutup' : view.myVote ? `Kamu memilih nomor ${view.myVote}` : 'Pilih nomor Kebijakan terbaik';
+    $('voteHint').textContent = view.revealed ? 'Voting ditutup' : view.myVote ? `Kamu memilih nomor ${view.myVote}. Ketuk nomor lain untuk mengganti.` : 'Pilih nomor Kebijakan terbaik';
+  }
+  function renderWait(){
+    $('waitHost').textContent = view.myVote ? 'Suaramu tersimpan. Masih bisa diganti sebelum hasil dibuka.' : 'Menunggu pemilik room membuka hasil…';
   }
   function renderResult(){
     const show = !!(view.revealed && view.tally);
     $('resultPanel').classList.toggle('hidden', !show);
     $('votePanel').classList.toggle('hidden', show);
-    if (!show) return;
-    const t = view.tally, max = Math.max(...t), bars = $('bars'); bars.innerHTML = '';
+    $('adjHint').classList.toggle('hidden', !(show && isHost));
+    if (!show) { renderResult.shownRound = null; return; }
+    const adj = view.adj || Array(OPTIONS).fill(0);
+    const t = view.tally.map((n, i) => n + adj[i]), max = Math.max(...t), bars = $('bars');
+    const animate = renderResult.shownRound !== view.round; renderResult.shownRound = view.round;
+    bars.innerHTML = '';
     t.forEach((n, i) => {
       const row = document.createElement('div');
-      row.className = 'bar' + (n === max && max > 0 ? ' win' : '');
-      row.innerHTML = `<span>${i + 1}</span><div class="track"><div class="fill" style="width:0%"></div></div><span>${n}</span>`;
+      row.className = 'bar' + (isHost ? ' ctl' : '') + (n === max && max > 0 ? ' win' : '');
+      const d = adj[i], tag = d ? `<span class="delta ${d > 0 ? 'up' : 'down'}"> (${d > 0 ? '+' : '−'}${Math.abs(d)})</span>` : '';
+      const w = (max ? (n / max) * 100 : 0) + '%';
+      row.innerHTML = `<span>${i + 1}</span><div class="track"><div class="fill" style="width:${animate ? '0%' : w}"></div></div><span class="tot">${n}${tag}</span>`;
+      if (isHost) {
+        const minus = document.createElement('button'), plus = document.createElement('button');
+        minus.className = plus.className = 'adj';
+        minus.textContent = '−'; plus.textContent = '+';
+        minus.setAttribute('aria-label', 'Kurangi 1 suara nomor ' + (i + 1));
+        plus.setAttribute('aria-label', 'Tambah 1 suara nomor ' + (i + 1));
+        minus.onclick = () => adjust(i, -1); plus.onclick = () => adjust(i, 1);
+        row.append(minus, plus);
+      }
       bars.appendChild(row);
-      requestAnimationFrame(() => { row.querySelector('.fill').style.width = (max ? (n / max) * 100 : 0) + '%'; });
+      if (animate) requestAnimationFrame(() => { row.querySelector('.fill').style.width = w; });
     });
     const winners = t.map((n, i) => n === max ? i + 1 : null).filter(Boolean);
     $('winner').textContent = max === 0 ? 'Tidak ada suara' : winners.length > 1 ? `Seri: nomor ${winners.join(' & ')}` : `Pemenang: nomor ${winners[0]}`;
